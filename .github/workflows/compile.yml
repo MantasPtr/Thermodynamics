@@ -10,7 +10,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Install dependencies 
-        run: make ubuntu
+        run: make ubuntu_install
       - name: Compile
         run: make compile
       - name: Upload binary

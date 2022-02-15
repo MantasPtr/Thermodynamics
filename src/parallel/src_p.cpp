@@ -9,7 +9,7 @@
 #include "../common/display_utils_flat.h"
 #include "../common/config_reader.h"
 
-double *termodynamics(double *matrix, int dimention_x = MATRIX_DIMENTION, int dimention_y = MATRIX_DIMENTION)
+double *termodynamics(double *matrix, int dimention_x, int dimention_y)
 {
     double *next_matrix = empty_matrix(dimention_x * dimention_y);
     for (int i = 0; i < dimention_x; i++)
