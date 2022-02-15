@@ -3,11 +3,14 @@ mpi: mpi_compile mpi_run
 view: gif preview
 full: cleanup mpi view
 m4: cleanup mpi_compile mpi_run_4 view 
+
 cleanup:
 	rm -rf ./images/*
 
-scale:
-	convert -scale 1000x  -delay 10 -loop 0 image_0.pgm $(for i in $(seq 0 50 9950); do echo image_${i}.pgm; done) images/result.gif 
+ubuntu_install:
+ 	sudo apt-get install mpich  
+
+
 gif:
 	convert -scale 1000x  -delay 10 -loop 0 images/*.pgm images/result.gif 
 preview:
