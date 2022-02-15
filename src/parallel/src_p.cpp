@@ -2,11 +2,14 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <algorithm>
+#include <tuple>
 
 #include "../common/utils_flat.h"
 #include "../common/display_utils_flat.h"
 #include "../common/config_reader.h"
 #include "../common/time_utils.h"
+
+using namespace std;
 
 double *termodynamics(double *matrix, int dimention_x, int dimention_y)
 {
@@ -128,7 +131,7 @@ int main(int argc, char *argv[])
                     i,
                     MPI_COMM_WORLD);
             }
-            std::copy(matrix, matrix + send_blocksize, work_matrix);
+            copy(matrix, matrix + send_blocksize, work_matrix);
         }
         // others processes receive data
         else
@@ -161,7 +164,7 @@ int main(int argc, char *argv[])
         {
             // processor 0 did everything locally, so just coping directly to
             // skip row 1
-            std::copy(work_matrix + MATRIX_DIMENTION, work_matrix + MATRIX_DIMENTION + recv_blocksize, matrix + MATRIX_DIMENTION);
+            copy(work_matrix + MATRIX_DIMENTION, work_matrix + MATRIX_DIMENTION + recv_blocksize, matrix + MATRIX_DIMENTION);
             for (int proc_id = 1; proc_id < proc_count; proc_id++)
             {
 
