@@ -1,0 +1,41 @@
+name: Compile
+on: [push]
+jobs:
+  build-sequential:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/sequential
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies 
+        run: sudo apt-get install cmake 
+      - name: Compile
+        run: make compile
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: sequential.sh
+          path: src/sequential/program.sh
+          if-no-files-found: error
+
+
+  build-parallel:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/parallel
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install dependencies 
+        run: sudo apt-get install mpich 
+      - name: Compile
+        run: make mpi_compile
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: parallel.sh
+          path: src/parallel/program.sh
+          if-no-files-found: error

@@ -1,0 +1,6 @@
+*.o
+*.sh
+*.png
+*.pgm
+*.gif
+.vscode/
