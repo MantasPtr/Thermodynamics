@@ -65,8 +65,7 @@ void termodynamics_2(double *matrix, int dimention_x, int dimention_y, double **
         }
     }
     double t2 = getTime();
-    double t3 = getTime();
-    printf(" update time: %.3f\n delete time: %.3f\n", t2 - t1, t3 - t2);
+    printf("update time: %.3f\n", t2 - t1);
 }
 
 int main(int argc, char *argv[])
