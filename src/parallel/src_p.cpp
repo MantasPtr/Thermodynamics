@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
-#include <time.h>
 #include <mpi.h>
 #include <algorithm>
 
 #include "../common/utils_flat.h"
 #include "../common/display_utils_flat.h"
 #include "../common/config_reader.h"
+#include "../common/time_utils.h"
 
 double *termodynamics(double *matrix, int dimention_x, int dimention_y)
 {
     double *next_matrix = empty_matrix(dimention_x * dimention_y);
+    double t1 = getTime();
     for (int i = 0; i < dimention_x; i++)
     {
         for (int j = 0; j < dimention_y; j++)
@@ -32,13 +32,45 @@ double *termodynamics(double *matrix, int dimention_x, int dimention_y)
             }
         }
     }
+    double t2 = getTime();
     delete_matrix(matrix);
+    double t3 = getTime();
+    printf(" update time: %.3f\n delete time: %.3f\n", t2 - t1, t3 - t2);
+
     return next_matrix;
+}
+
+void termodynamics_2(double *matrix, int dimention_x, int dimention_y, double **result_matrix)
+{
+    double *next_matrix = *result_matrix;
+    double t1 = getTime();
+    for (int i = 0; i < dimention_x; i++)
+    {
+        for (int j = 0; j < dimention_y; j++)
+        {
+            // first or last column or row
+            if (i == 0 || i == dimention_x - 1 || j == 0 || j == dimention_y - 1)
+            {
+                // assuming sides has constant value
+                next_matrix[i * dimention_y + j] = matrix[i * dimention_y + j];
+            }
+            else
+            {
+                next_matrix[i * dimention_y + j] = (matrix[(i - 1) * dimention_y + j] +
+                                                    matrix[(i + 1) * dimention_y + j] +
+                                                    matrix[i * dimention_y + j - 1] +
+                                                    matrix[i * dimention_y + j + 1]) /
+                                                   4;
+            }
+        }
+    }
+    double t2 = getTime();
+    double t3 = getTime();
+    printf(" update time: %.3f\n delete time: %.3f\n", t2 - t1, t3 - t2);
 }
 
 int main(int argc, char *argv[])
 {
-
     auto config = read_config("config.ini");
 
     auto MATRIX_DIMENTION = get<0>(config);
@@ -49,11 +81,15 @@ int main(int argc, char *argv[])
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     int id, proc_count;
+    double start_time;
     MPI_Status com_status;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_count);
-
+    if (id == 0)
+    {
+        start_time = getTime();
+    }
     // TODO: handle uneven division errors
 
     // -2 is for first and last row - they are constants, so no computation
@@ -63,6 +99,7 @@ int main(int argc, char *argv[])
     int send_blocksize = block_row_count * MATRIX_DIMENTION;
     int recv_blocksize = work_row_count * MATRIX_DIMENTION;
     double *work_matrix = new double[send_blocksize];
+    double *result_matrix = new double[send_blocksize];
     if (id == 0)
     {
         printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
@@ -81,8 +118,8 @@ int main(int argc, char *argv[])
             for (int proc_id = 1; proc_id < proc_count; proc_id++) // TODO: handle 1 processor
             {
                 int offset = proc_id * work_row_count * MATRIX_DIMENTION;
-                // printf("send data with offset of %d to processor %i\n", offset, id);
-                // printf("Sending data from %d (total of %d, usable %d) to process %d\n", id, send_blocksize, recv_blocksize, proc_id);
+                printf("send data with offset of %d to processor %i\n", offset, id);
+                printf("Sending data from %d (total of %d, usable %d) to process %d\n", id, send_blocksize, recv_blocksize, proc_id);
 
                 MPI_Send(
                     matrix + offset, // TODO: check math for this thing
@@ -105,7 +142,7 @@ int main(int argc, char *argv[])
                 i,
                 MPI_COMM_WORLD,
                 &com_status);
-            // printf("Process %d reveived %d message from process %d.  Error code %d\n", id, i, com_status.MPI_SOURCE, com_status.MPI_ERROR);
+            printf("Process %d reveived %d message from process %d.  Error code %d\n", id, i, com_status.MPI_SOURCE, com_status.MPI_ERROR);
         }
 
         // MPI_Scatter(matrix + N * M / blockCount * i, M * oneBlockSize, MPI_INT, workMatrix, M * oneBlockSize, MPI_INT, 0, MPI_COMM_WORLD);
@@ -115,7 +152,12 @@ int main(int argc, char *argv[])
         //     printf("work matrix for process %d:\n", id);
         //     print_matrix(work_matrix, block_row_count, MATRIX_DIMENTION);
         // }
-        work_matrix = termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION);
+        // work_matrix = termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION);
+        termodynamics_2(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
+        double *tmp = work_matrix;
+        work_matrix = result_matrix;
+        result_matrix = tmp;
+
         // printf("Ending termodynamics");
 
         if (id == 0)
@@ -152,8 +194,14 @@ int main(int argc, char *argv[])
 
         if (DRAW_FREQUENCY > 0 && id == 0 && i % DRAW_FREQUENCY == 0)
         {
+            printf("%d iterations has passed\n", i);
             save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
         }
+    }
+    if (id == 0)
+    {
+        double end_time = getTime();
+        printf("execution time: %.3f\n", end_time - start_time);
     }
     MPI_Finalize();
 }

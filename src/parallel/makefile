@@ -16,9 +16,9 @@ preview:
 	eog images/result.gif
 
 mpi_compile:
-	mpic++ src_p.cpp ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c -o program.sh
+	mpic++ src_p.cpp ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/config_reader.cpp ../common/time_utils.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c -o program.sh
 mpi_run:
-	mpirun -n 2 ./p_program.sh
+	mpirun -n 2 ./program.sh
 mpi_run_4:
-	mpirun -n 4 ./p_program.sh
+	mpirun -n 4 ./program.sh
 
