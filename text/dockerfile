@@ -1,0 +1,14 @@
+FROM ubuntu:latest
+
+WORKDIR /opt
+RUN apt-get update
+RUN apt-get install build-essential -y
+RUN apt-get install sudo -y
+COPY ./Makefile .
+COPY ./Palemonas-2.1 /usr/share/fonts/truetype/
+
+RUN sudo apt-get install texlive-full -y
+RUN sudo apt-get install biber -y
+RUN sudo apt-get install fonts-texgyre -y
+
+RUN make ubuntu 

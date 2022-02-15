@@ -1,0 +1,82 @@
+\section{Algortimo analizė}
+
+Šiame skyriuje aprašomas darbe nagrinėjamas asynchroniško sesiju valdymo algoritmo \cite{petrauskas2018asynchronous} modelis, pagrindiniai algoritmo veikimo principai, daromos prielaidos, galimi
+modelio ir realios sistemos neatitikimai.
+
+Modelis sudarytas iš 3 sistemų grupių. Kientų-vartotojų (angl. consumers), 
+ kurie atitinka siekiančių gauti informacija ar laikiantys tam tikro rezultato, 
+ tiekėjų (angl. providers), kurie aptarnauja kientus teikdami duomenis ar atlikdami funkcijas. 
+Bendravimas tarp vartotojų ir tiekėjų vyksta sesijų pagalba ir koordinatorių (angl. coordinators), 
+ valdančių vartotojų ir tiekėjų komunikaciją. 
+Tiek vartotojų, tiek vartojų grupėje esantys mazgai (angl. nodes) patys nežino 
+ apie kitų to pačio tipo mazgų egzistavimą, ir neturi valdančio proceso (angl. master node), 
+ kuris galėtų valdyti bendravimą tarp jų.
+
+Tinklo topologija modelyje nėra detalizuojama,
+ tačiau daroma prielaida kad visi koordinuojantys mazgai žino apie visus kitus koordinuojančius mazgus,
+ o sesijos gali sudaryti ryšį su bet kuriuo tiekėjo mazgu.
+Tai nebūtinai atitinka realiaus panaudojimo atvejus, 
+ nes paskirtų sistemų dalys gali būti veikti skirtinguose pasaulio vietose 
+ ir nebutinai būti vienodai pasiekiamos skirtuose tinkluose (ang. subnets)
+ tačiau sistemos topologijos problematika nėra nagrinėjama šiame darbe.
+
+
+\subsection{Modelio būsena}
+
+Modelis aprašomas TLA\textsuperscript{+} modelio kalba, 
+ ir jo savybių tikrinui naudojamas TLA+ toolbox įrankis,
+ todėl norint patikriniti modelio teisingumą reikia apriboti galimų tinklo mazgų kombinacijų skaičių. 
+Tai daroma keičiant modelio konfiguracija, keičiant sesijų, tiekėjų ir vartotojų skaičių 
+ prieš atliekant formalų modelio tikrinimą. 
+Šie parametrai nesikeičia modelio tikrinimo metu,
+ tačiau gali būti pakeisti prieš paleidžiant skirtingas simuliacijas.  
+Modelyje laikoma kad kiekvienas vartotojas gali turi vienoda sesijų kiekį,
+ tačiau sesija nebūtinai gali būti prisijungusi prie vartotojo.
+Kiekvienas vartotojo mazgas turi savo koordinatorių.
+
+
+\subsection{Tiekėjų būsenos pakeitimai}
+
+Modelyje tiekėjai turi 2 būsenų perėjimus.
+Jei tiekėjas veikia, jis gali tapti neveikiančiu ir atvirščiai- neveikiantis gali tampti veikiančiu.
+Sąlygos dėl kurių tiekėjai gali nustoti veikti ar vėl pradėti veikti nėra apibrėžtos ir modelyje nemodeliuojamos.
+Tiekėjai patys nepraneša aptarnaujanties mazgams apie savo būsenos pakeitimus, 
+žinučių apie klientų būsenų pasikeitimus sekimu rupinasi prie tiekėjo prisijungę vartotojai.
+
+\subsection{Vartojų būsenos pakeitimai}
+
+Modelyje vartotai turi 3 būsenų pakeitimus: 
+vartotojo sesijos prisijungimą prie veikiančio tiekėjo, 
+sesijos atsijungimą gavus žinutę iš koordinatoriaus apie neveikiantį tiekėją,
+sesijos atsijungimą nustojus veikti tiekėjui.
+
+Komunikacija tarp tiekėjo ir vartotojo šiame algortimo modelyje nėra modeliuojama, 
+ nes normalus sistemos veikimas nekeičia sistemos būsenos, 
+ nes laikoma kad klientas yra visada lieka prisijungęs prie to pačio tiekėjo. 
+
+
+\subsection{Koordinatoriaus būsenos pakeitimai}
+
+Modelyje koordinatoriai turi 3 būsenų pakeitimus: 
+žinučių iš sesijų apie neaktyvius tiekėjus apdoriją,
+pranešimą kitiems koordinatoriams apie neveikiančius tiekėju mazgus,
+tikrinimą ar tiekėjai tapo aktyviais.
+
+Koordinuojantis mazgas, gavęs pranešimą apie neveikiantį tiekėją,
+ išsisaugo savo busenoje tiekėja kaip neveikiantį 
+ ir asynchroniškai praneša visoms savo valdomoms sesijoms apie neveikiantį mazgą.
+
+Koordinatorius žinantis apie neveikiantį mazga, 
+ nuolatos asynchroniškai tikrinina tiekėjo būsena ir
+ sužinojęs apie pradėjusi veikti mazgą, atnaujina savo būseną,
+ pažyminti tiekėją kaip veikiantį.
+
+Klientai, iš koordinuojančios gavę žinutę apie neveikiantį tiekėjo mazgą,
+ kiekvienai sesijai atskirai asynchronišku būdu nurodo atsijungti nuo kliento.
+Atsijungusios sesijos gali prisijungti prie kito veikiančio tiekėjo.
+Modelyje apraščiame darbe \cite{petrauskas2018asynchronous} daroma prielaida, 
+ kad sesijoje vieno tiekėjo pakeimas kitu yra leidžiamą operacija, 
+ nors pabrėžiama, kad realiame scenarijuje tiekėjo mazgo pakeitimas gali 
+ pasireikšti sistemos veikimo suletėjimu ar nenuoseklių (ang. inconsistent) duomenų atsiradimu, 
+ todėl šios operacija turėtų būti kaip įmanoma labiau vengiama.
+

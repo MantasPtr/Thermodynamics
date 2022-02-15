@@ -1,0 +1,65 @@
+\subsubsection*{Tyrimo objektas}
+
+  Šiame darbe analizuojamas algortimas, skirtas asinchroniškai valdyti sesijų komunikaciją tarp skirtingu paskritytos sistemos grupių (angl. ,,clusters'') \cite{petrauskas2018asynchronous, petrauskas2019effectiveness}.
+  Algoritmas aprašytas TLA\textsuperscript{+} specifikavimo kalba \cite{lamporttla+}, jo korektiškumas yra tikrinamas atviro kodo ,,TLA\textsuperscript{+} toolbox'' įrankiu  \cite{kuppe2019tla+}.
+
+\subsubsection*{Darbo aktualumas}
+  
+  Moderios didelio praleidumą turinčios sistemos apdoroja tukstančius, ar net milijonus užklausų vienu metu, ir greitai ir patikimai gražinti duomenis.
+  Kad efektyviai pasiekti rezultatus, sistemos projektuojamos numatant galimę plėsti jas didiant serverių skaičių ir paskirstant apkrovą tarp jų \cite{soni2016nginx}.
+  
+  Paskirstytos sistemos suteikia turi daug privalumų - 
+  padidėja sistemos prieinamumas, sumažinamas nekritinių sistemos dalių poveikis visos sistemos veiklai,
+  suteikiama galimybė didinti sistemos pralaidumą paralelizuojant ir horizontaliai plečiant sistemos resursus. 
+  Tačiau paskirstytos sistemos turi ir minusų. Dauguma paskirstytų sistemų problemų susiję su sudėtingesne infrastrukūra ir diegimu (ang. deployment), 
+  sistemos būsėnos valdymu ir  vientisumo išlaikymu visose sistemos dalyse \cite{thones2015microservices}.
+  Norinti išlaikyti didelį sistemos pasiekiamumą ir operacijų greitumą, dalis sistemų naudoja asynchoninis bendravimą tarp skirtingų sistemų dalių, 
+  užtikrinant tik galutinį būsenos nuoseklumą (ang. eventual consistency) \cite{vogels2009eventually}.
+
+
+  TLA\textsuperscript{+} yra formali, predikatų logiką paremta, aukšto lygio modeliavo kalba, leidžianti projektuoti, aprašyti ir tikrinti sistemų korektiškumą \cite{kuppe2019tla}.
+  Ši kalba yra naudojama didžiosiose kompanijose, ,,Intel'' \cite{batson2002high} ,,Amazon'' komponijoje \cite{newcombe2015amazon}, Microsoft ir kitose. 
+  Specifikavimo kalba leidžia naudojant predikatų logiką aprašyti pradinę sistemos būseną,
+  leistinus sistemos būsenos pakitimus ir savybės kurias modelis turi tenkinti, 
+  tada naudojant ,,TLA toolbox'' įrankį" patikrinti ar visos sistemos būsenos tenkina pasirinktas savybes.
+  Toks formalus modelio būsenų tikrinimas tinkrina modelio logines algortimo savybės, ir tai leidžia patikti retas sistemos busenas ir panaudos scenarijus, 
+  apie kurios nevisada pagalvoma rašant algortimus, atliekant statinę kodo analizę ar testuojant \cite{newcombe2015amazon}.
+  Šis metodas leidžia aptinkti galimas klaidas prieš išmeginant sistemą realioje aplinkose,
+  taip sumažinant sistemos taisymo kaštus ir užkertant kritiniams sistemos sutrikimams,
+  kas yra ypatingai svarbu kritinėse sistemose ar sistemose kurios siekia turėti dideli pasiekiamumą.
+
+  Moksliniame straipsnyje ,,Effectiveness of the asynchronous client-side coordination of cluster service sessions'' aprašomas algortimas,
+  galintis sumažinti į neveikianti mazga nukreiptų užklausų skaičių, stebinti sistemos klientų busenas 
+  ir informuojant kitus sistomos klientus apie kliento aptinktus sutrikimus.
+  Modelyje nenumatomi laikini tiklo sutrikimai, dėl kurių kai kurie mazgai siunčiantiems užklausas gali laikinai tapti klientams gali atrodyti nepasiekiami.
+  Šis darbas nagrinėja algoritmo elgseną, papildydamas algortimo modelį laikinų sutrikimų būsenomis.
+
+
+\subsubsection*{Darbo tikslas}
+
+  Tikslas: Išanalizuoti sesijų valdymo algoritmą, įvertinti laikinių tinklo sutrikimų poveikį ir apžvelgti būdus kaip galima būtų patobulinti algoritmą.
+
+\subsubsection*{Darbo uždaviniai}
+    
+  \begin{itemize}
+    \item Atlikti mokslinės literatūros analizę, nagrinėjant panašius sesijų valdymo algoritmus.
+    \item Išanalizuoti sesijų valdymo algoritmo modelį.
+    \item Suformuluoto savybę, įrodancią, kad algoritmas veiks tinkamai, nepavyks prisijungti prie vienintelio aktyvaus tiekėjo mazgo.
+    \item Naudojant TLA+ toolbox programinį paketą įrodyti, kad egzistuoja sistemos būsena kurioje pateikta savybė nėra tenkima.
+    \item Pasiūlyti kaip būtu galima patobulininti algoritmą, kad pateikta savybė būtų tenkinama.
+  \end{itemize}
+
+
+
+\subsubsection*{Tyrimo metodai}
+
+  Darbe atliekama asynchoninio sesijų valdymo algoritmo, aprašyto TLA\textsuperscript{+} modeliavimo kalba analizė, 
+    praktiškai tikrinamas jo savybių tesingumas naudojant ,,TLA\textsuperscript{+} toolbox'' įrankį, 
+    testuojant skirtingus modelio parametrus.
+  Taip pat, darbe apžvelgiama paskistytų asynchroniškai bendraujančių systemų valdymo algortimų mokslinės literatūra. 
+
+\subsubsection*{Darbo struktūra}
+
+Pirmajame skyriuje aprašomas sesijų valdymo algoritmo modelis. 
+Antrajame skyriuje aprašomas aprašyto modelio papildymas tinklo sutrikimais, ir poveikis sistemos modeliui. 
+Trečiajame skyriuje nagrinėjama algoritmo patobulimo galimybės.

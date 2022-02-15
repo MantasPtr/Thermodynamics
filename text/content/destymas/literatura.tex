@@ -1,0 +1,50 @@
+\section{Literatūros ir esamų metodų apžvalga}
+
+Siame skyriuje apžvalgiama su sesiju valdymu susijusi literatūra
+
+
+
+\section{Sesiju panaudojamas}
+
+Sesijos saugo vartotojo informacija apie dabartine saveikos busena su programa. Tai naudojama internetinese programose, 
+
+Įprasta internetine programa išlaiko kiekvieno prisijungusio vartotojo sesiją tol, kol vartotojas yra prisijungęs. 
+Sesijos būsena yra tai, kaip programos prisimena vartotojo tapatybę, suasmeninimo informaciją, prisijungimo duomenis, ar
+naujausius veiksmus. Sesijoje kaupiami duomenys leidzia greiciau pasiekti reikiamus duomenis, daznai 
+
+Sesijos gyvavimo laikas pasibaigia, kai vartojas specifiškai iššaukia atsijungimo veiksmą 
+arba tam tikra laiko tarpą kvieciami su sesija susije veiksmai.
+Priklausimai nuo sesijos paskirties, kai kurie duomenys gali būti išsaugoti duomenų bazėje, vėlesniam naudojimui, 
+arba trumpalaikės informacija gali būti sunaikinama pasibaigus sesijai.
+
+Sesijos būsena yra panaši į spartinančiąją atmintį (ang. cache), skiriasi tik duomenų valdymo modelis.
+Spartinančioji atmintis yra tolerantiška duomenų praradimui ir ją bet kada galima atkurti iš pirminės duomenų bazės, 
+tačiau atnaujinant spartinančios atminties duomenis reikia atnaujinti ir pagrindinę duomenų talpyklą.
+Sesijos duomenis sukuriami prasidedant sesijai, ir vėliau nėra garantuojama kad sesijos duomenys nepasikeis t.y. juos bus galima atkurti duomenų šaltinio.
+Sesijos duomenys dažniausiai išsaugomi į pagrindinę talpyklą tik pasibaigus sesijai.
+Sesijos duomenys gali būti laikini arba nuolatiniai - t.y.  pasibaigus vartotojo sesijai duomenys gali būti sunaikinami arba išsaugoti vėliasniam naudojimui..
+
+
+\section{Resursu valdymas}
+
+Norinti sumažinti programos prieeinamumo laikotarpį, 
+
+
+
+\section{Komunikacijos klaidos}
+
+Duomenų perdavimo sutrikimai gali atsitiki dėl per didelės tinklo apkrovos, aptarnaujančios serverio perkrovos,
+techninės ar programinės įrangos klaidos, paslaugų teikimą trikdančių (angl. denial-of-service) atakų \cite{ayari2008fault}.
+
+
+Session pool management
+
+Resource management
+Redudancy
+Resource sharing
+Session management
+Network faults
+Net split
+False negatives
+
+t56
