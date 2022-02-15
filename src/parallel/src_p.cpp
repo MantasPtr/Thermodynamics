@@ -154,9 +154,7 @@ int main(int argc, char *argv[])
         // }
         // work_matrix = termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION);
         termodynamics_2(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
-        double *tmp = work_matrix;
-        work_matrix = result_matrix;
-        result_matrix = tmp;
+        swap(work_matrix, result_matrix);
 
         // printf("Ending termodynamics");
 
