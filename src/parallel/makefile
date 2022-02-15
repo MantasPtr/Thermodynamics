@@ -8,8 +8,7 @@ cleanup:
 	rm -rf ./images/*
 
 ubuntu_install:
- 	sudo apt-get install mpich  
-
+ 	sudo apt-get install mpich
 
 gif:
 	convert -scale 1000x  -delay 10 -loop 0 images/*.pgm images/result.gif 
@@ -22,8 +21,4 @@ mpi_run:
 	mpirun -n 2 ./p_program.sh
 mpi_run_4:
 	mpirun -n 4 ./p_program.sh
-
-debug: cleanup mpi
-	convert -scale 1000x  images/image_00001.pgm images/image2_00001.pgm
-	eog images/image2_00001.pgm
 
