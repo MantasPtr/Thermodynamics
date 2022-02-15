@@ -7,12 +7,7 @@
 
 #include "../common/utils_flat.h"
 #include "../common/display_utils_flat.h"
-
-#define MATRIX_DIMENTION 100
-#define MAX_MATRIX_VALUE 1.0
-#define MAX_ITERATION_COUNT 500
-#define DRAW_FREQUENCY 10
-#define USE_ABS_SCALE false
+#include "../common/config_reader.h"
 
 double *termodynamics(double *matrix, int dimention_x = MATRIX_DIMENTION, int dimention_y = MATRIX_DIMENTION)
 {
@@ -43,6 +38,15 @@ double *termodynamics(double *matrix, int dimention_x = MATRIX_DIMENTION, int di
 
 int main(int argc, char *argv[])
 {
+
+    auto config = read_config("config.ini");
+
+    auto MATRIX_DIMENTION = get<0>(config);
+    auto MAX_MATRIX_VALUE = get<1>(config);
+    auto MAX_ITERATION_COUNT = get<2>(config);
+    auto DRAW_FREQUENCY = get<3>(config);
+    auto USE_ABS_SCALE = get<4>(config);
+
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     int id, proc_count;
     MPI_Status com_status;
@@ -50,7 +54,7 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_count);
 
-    //TODO: handle uneven division errors
+    // TODO: handle uneven division errors
 
     // -2 is for first and last row - they are constants, so no computation
     int work_row_count = (MATRIX_DIMENTION - 2) / proc_count;
@@ -146,7 +150,7 @@ int main(int argc, char *argv[])
                 MPI_COMM_WORLD);
         }
 
-        if (DRAW_FREQUENCY != 0 && id == 0 && i % DRAW_FREQUENCY == 0)
+        if (DRAW_FREQUENCY > 0 && id == 0 && i % DRAW_FREQUENCY == 0)
         {
             save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
         }

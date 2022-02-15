@@ -55,7 +55,7 @@ int main()
     for (int i = 1; i < MAX_ITERATION_COUNT; i++)
     {
         matrix = termodynamics(matrix, MATRIX_DIMENTION);
-        if (i % DRAW_FREQUENCY == 0)
+        if (DRAW_FREQUENCY > 0 && i % DRAW_FREQUENCY == 0)
         {
             save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
         }
