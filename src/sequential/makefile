@@ -6,7 +6,7 @@ cleanup:
 	rm -rf ./images/*
 
 ubuntu_install:
- 	sudo apt-get install cmake 
+	sudo apt-get install cmake
 
 compile:
 	g++ src_s.cpp ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c -o program.sh

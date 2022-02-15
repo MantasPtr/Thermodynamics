@@ -8,7 +8,7 @@ cleanup:
 	rm -rf ./images/*
 
 ubuntu_install:
- 	sudo apt-get install mpich
+	sudo apt-get install mpich
 
 gif:
 	convert -scale 1000x  -delay 10 -loop 0 images/*.pgm images/result.gif 
