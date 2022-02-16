@@ -57,5 +57,7 @@ jobs:
         run: |
           mv ${{steps.download.outputs.download-path}}/program.sh .
           chmod +x program.sh
+          ls -al
+          ls -al ../test_files/
       - name: Run tests
         run: make test
