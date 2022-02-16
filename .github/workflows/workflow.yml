@@ -53,7 +53,9 @@ jobs:
     with: 
       work_dir: src/parallel
       artifact_name: parallel.sh
-      test_command:  make test_1
+      test_command: |  
+        make ubuntu_install
+        make test_1
   
   test-parallel-2-core:
     uses: ./.github/workflows/test_reusable.yml
@@ -61,7 +63,9 @@ jobs:
     with: 
       work_dir: src/parallel
       artifact_name: parallel.sh
-      test_command:  make test_2
+      test_command:  | 
+        make ubuntu_install
+        make test_2
 
   test-parallel-4-core:
     uses: ./.github/workflows/test_reusable.yml
@@ -69,4 +73,6 @@ jobs:
     with: 
       work_dir: src/parallel
       artifact_name: parallel.sh
-      test_command:  make test_4
+      test_command: |
+        make ubuntu_install
+        make test_4
