@@ -17,7 +17,7 @@ on:
         type: string
      
 jobs:
-  run-test:
+  run_test:
     needs: [${{ inputs.run_after_job }}]
     runs-on: ubuntu-latest
     defaults:
