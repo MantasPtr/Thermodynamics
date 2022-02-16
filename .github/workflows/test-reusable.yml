@@ -3,26 +3,26 @@ name: Reusable workflow example
 on:
   workflow_call:
     inputs:
-      work-dir:
+      work_dir:
         required: true
         type: string
-      artifact-name:
+      artifact_name:
         required: true
         type: string
-      test-command:
+      test_command:
         required: true
         type: string
-      run-after-job:
+      run_after_job:
         required: true
         type: string
      
 jobs:
   run-test:
-    needs: [${{ inputs.run-after-job }}]
+    needs: [${{ inputs.run_after_job }}]
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ inputs.run-after-job }}
+        working-directory: ${{ inputs.work_dir }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -30,13 +30,13 @@ jobs:
         uses: actions/download-artifact@v2
         id: download
         with:
-          name: ${{ inputs.artifact-name }}
+          name: ${{ inputs.artifact_name }}
       - name: Prepare executable
         run: |
           mv ${{steps.download.outputs.download-path}}/program.sh .
           chmod +x program.sh
       - name: Run tests
-        run: ${{ inputs.test-command }}
+        run: ${{ inputs.test_command }}
 
 
   
