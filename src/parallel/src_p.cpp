@@ -13,8 +13,9 @@ using namespace std;
 
 void termodynamics(double *matrix, int dimention_x, int dimention_y, double **result_matrix)
 {
-    double *next_matrix = *result_matrix;
     double t1 = getTime();
+    double *next_matrix = *result_matrix;
+ 
     for (int i = 0; i < dimention_x; i++)
     {
         for (int j = 0; j < dimention_y; j++)
@@ -75,8 +76,10 @@ int main(int argc, char *argv[])
         printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
         printf(" - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", work_row_count, block_row_count, send_blocksize, recv_blocksize);
         double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
-        // save inital value
-        save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
+        if (DRAW_FREQUENCY > 0) {
+            // save initial matrix value for visualization
+            save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
+        }
     }
 
     // going throught termodinamic iterations
