@@ -53,12 +53,9 @@ jobs:
         id: download
         with:
           name: sequential.sh
-      - name: Rename artifact
+      - name: Prepare executable
         run: |
-          mv ${{steps.download.outputs.download-path}}/program.sh $PWD/program.sh
-          echo ${{steps.download.outputs.download-path}}
-          ls -al ${{steps.download.outputs.download-path}}
-          pwd
-          ls -al
+          mv ${{steps.download.outputs.download-path}}/program.sh .
+          chmod +x program.sh
       - name: Run tests
         run: make test
