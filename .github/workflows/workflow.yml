@@ -54,6 +54,8 @@ jobs:
         with:
           name: sequential.sh
       - name: Rename artifact
-        run: mv ${{steps.download.outputs.download-path}} program.sh
+        run: | 
+          ls -al ${{steps.download.outputs.download-path}}
+          mv ${{steps.download.outputs.download-path}}/sequential.sh program.sh
       - name: Run tests
         run: make test
