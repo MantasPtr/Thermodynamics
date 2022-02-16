@@ -11,39 +11,7 @@
 
 using namespace std;
 
-double *termodynamics(double *matrix, int dimention_x, int dimention_y)
-{
-    double *next_matrix = empty_matrix(dimention_x * dimention_y);
-    double t1 = getTime();
-    for (int i = 0; i < dimention_x; i++)
-    {
-        for (int j = 0; j < dimention_y; j++)
-        {
-            // first or last column or row
-            if (i == 0 || i == dimention_x - 1 || j == 0 || j == dimention_y - 1)
-            {
-                // assuming sides has constant value
-                next_matrix[i * dimention_y + j] = matrix[i * dimention_y + j];
-            }
-            else
-            {
-                next_matrix[i * dimention_y + j] = (matrix[(i - 1) * dimention_y + j] +
-                                                    matrix[(i + 1) * dimention_y + j] +
-                                                    matrix[i * dimention_y + j - 1] +
-                                                    matrix[i * dimention_y + j + 1]) /
-                                                   4;
-            }
-        }
-    }
-    double t2 = getTime();
-    delete_matrix(matrix);
-    double t3 = getTime();
-    printf(" update time: %.3f\n delete time: %.3f\n", t2 - t1, t3 - t2);
-
-    return next_matrix;
-}
-
-void termodynamics_2(double *matrix, int dimention_x, int dimention_y, double **result_matrix)
+void termodynamics(double *matrix, int dimention_x, int dimention_y, double **result_matrix)
 {
     double *next_matrix = *result_matrix;
     double t1 = getTime();
@@ -147,18 +115,8 @@ int main(int argc, char *argv[])
             printf("Process %d reveived %d message from process %d.  Error code %d\n", id, i, com_status.MPI_SOURCE, com_status.MPI_ERROR);
         }
 
-        // MPI_Scatter(matrix + N * M / blockCount * i, M * oneBlockSize, MPI_INT, workMatrix, M * oneBlockSize, MPI_INT, 0, MPI_COMM_WORLD);
-        // printf("Staring termodynamics iteration");
-        // if (id == 2)
-        // {
-        //     printf("work matrix for process %d:\n", id);
-        //     print_matrix(work_matrix, block_row_count, MATRIX_DIMENTION);
-        // }
-        // work_matrix = termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION);
-        termodynamics_2(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
+        termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
         swap(work_matrix, result_matrix);
-
-        // printf("Ending termodynamics");
 
         if (id == 0)
         {
