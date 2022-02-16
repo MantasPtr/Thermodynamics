@@ -46,13 +46,13 @@ jobs:
       run:
         working-directory: src/sequential
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
       - name: Download a single artifact
         uses: actions/download-artifact@v2
         with:
           name: sequential.sh
       - name: Rename artifact
         run: mv sequential.sh program.sh
-      - name: Check out repository code
-        uses: actions/checkout@v2
       - name: Run tests
         run: make test
