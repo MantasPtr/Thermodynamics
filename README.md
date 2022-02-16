@@ -3,7 +3,7 @@
 ### ToDo list:
 
 - [ ] Rewrite config to structs
-- [ ] Add integration tests
+- [x] Add integration tests
 - [ ] ~~Add unit tests~~
 - [x] Add time measurement for parallel
 - [x] Add time measurement for sequential
