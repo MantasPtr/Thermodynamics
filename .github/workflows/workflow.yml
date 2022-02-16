@@ -50,6 +50,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: sequential.sh
+      - name: Rename artifact
+        run: mv sequential.sh program.sh
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Run tests
