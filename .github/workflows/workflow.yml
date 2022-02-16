@@ -50,5 +50,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: sequential.sh
+      - name: Check out repository code
+          uses: actions/checkout@v2
       - name: Run tests
         run: make test
