@@ -12,9 +12,6 @@ on:
       test_command:
         required: true
         type: string
-      run_after_job:
-        required: true
-        type: string
      
 jobs:
   run_test:
