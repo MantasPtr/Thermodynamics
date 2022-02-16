@@ -57,7 +57,15 @@ jobs:
         run: |
           mv ${{steps.download.outputs.download-path}}/program.sh .
           chmod +x program.sh
-          ls -al
-          ls -al ../test_files/
       - name: Run tests
         run: make test
+
+
+  test-sequential-reusable:
+    uses: ./.github/workflows/test-resuable.yml
+    with: 
+      work_dir: src/sequential
+      artifact_name: sequential.sh
+      test_command:  make test
+      run_after_job: build-sequential
+      

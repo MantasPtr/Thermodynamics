@@ -1,0 +1,42 @@
+name: Reusable workflow example
+
+on:
+  workflow_call:
+    inputs:
+      work-dir:
+        required: true
+        type: string
+      artifact-name:
+        required: true
+        type: string
+      test-command:
+        required: true
+        type: string
+      run-after-job:
+        required: true
+        type: string
+     
+jobs:
+  run-test:
+    needs: [${{ inputs.run-after-job }}]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.run-after-job }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        id: download
+        with:
+          name: ${{ inputs.artifact-name }}
+      - name: Prepare executable
+        run: |
+          mv ${{steps.download.outputs.download-path}}/program.sh .
+          chmod +x program.sh
+      - name: Run tests
+        run: ${{ inputs.test-command }}
+
+
+  
