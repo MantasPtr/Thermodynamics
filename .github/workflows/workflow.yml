@@ -53,9 +53,6 @@ jobs:
         with:
           name: sequential.sh
       - name: Rename artifact
-        run: |
-          pwd
-          ls -la
-          mv sequential.sh program.sh
+        run: mv /home/runner/work/Thermodynamics/Thermodynamics/sequential.sh program.sh
       - name: Run tests
         run: make test
