@@ -47,7 +47,6 @@ jobs:
       artifact_name: sequential.sh
       test_command:  make test
       
-
   test-parallel-1-core:
     uses: ./.github/workflows/test_reusable.yml
     needs: [build-parallel]
@@ -64,7 +63,7 @@ jobs:
       artifact_name: parallel.sh
       test_command:  make test_2
 
-    test-parallel-4-core:
+  test-parallel-4-core:
     uses: ./.github/workflows/test_reusable.yml
     needs: [build-parallel]
     with: 
