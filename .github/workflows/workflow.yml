@@ -62,7 +62,7 @@ jobs:
 
 
   test-sequential-reusable:
-    uses: MantasPtr/Thermodynamics/.github/workflows/test_resuable.yml@main
+    uses: MantasPtr/Thermodynamics/.github/workflows/test_reusable.yml@main
     with: 
       work_dir: src/sequential
       artifact_name: sequential.sh
