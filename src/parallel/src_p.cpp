@@ -15,7 +15,7 @@ void termodynamics(double *matrix, int dimention_x, int dimention_y, double **re
 {
     double t1 = getTime();
     double *next_matrix = *result_matrix;
- 
+
     for (int i = 0; i < dimention_x; i++)
     {
         for (int j = 0; j < dimention_y; j++)
@@ -42,7 +42,16 @@ void termodynamics(double *matrix, int dimention_x, int dimention_y, double **re
 
 int main(int argc, char *argv[])
 {
-    auto config = read_config("config.ini");
+    double start_time = getTime();
+
+    string config_location = "config.ini";
+    if (argc == 2)
+    {
+        // argv[0] - program name
+        config_location = argv[1];
+    }
+
+    auto config = read_config(config_location);
 
     auto MATRIX_DIMENTION = get<0>(config);
     auto MAX_MATRIX_VALUE = get<1>(config);
@@ -52,15 +61,10 @@ int main(int argc, char *argv[])
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     int id, proc_count;
-    double start_time;
     MPI_Status com_status;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_count);
-    if (id == 0)
-    {
-        start_time = getTime();
-    }
     // TODO: handle uneven division errors
 
     // -2 is for first and last row - they are constants, so no computation
@@ -76,7 +80,8 @@ int main(int argc, char *argv[])
         printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
         printf(" - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", work_row_count, block_row_count, send_blocksize, recv_blocksize);
         double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
-        if (DRAW_FREQUENCY > 0) {
+        if (DRAW_FREQUENCY > 0)
+        {
             // save initial matrix value for visualization
             save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
         }

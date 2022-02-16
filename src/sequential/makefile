@@ -13,6 +13,11 @@ compile:
 run:
 	./program.sh
 
+
+test: cleanup
+	./program.sh ../test_files/config.ini
+	diff ./images ../test_files/images
+
 gif:
 	convert -scale 1000x  -delay 10 -loop 0 images/*.pgm images/result.gif 
 preview:

@@ -20,7 +20,6 @@ jobs:
           path: src/sequential/program.sh
           if-no-files-found: error
 
-
   build-parallel:
     runs-on: ubuntu-latest
     defaults:
@@ -32,10 +31,24 @@ jobs:
       - name: Install dependencies 
         run: make ubuntu_install
       - name: Compile
-        run: make mpi_compile
+        run: make compile
       - name: Upload binary
         uses: actions/upload-artifact@v2
         with:
           name: parallel.sh
           path: src/parallel/program.sh
           if-no-files-found: error
+
+  test-sequential:
+    needs: [build-sequential]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/sequential
+    steps:
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sequential.sh
+      - name: Run tests
+        run: make test

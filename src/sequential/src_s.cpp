@@ -13,8 +13,8 @@
 // #define DRAW_FREQUENCY 10
 // #define USE_ABS_SCALE false
 
-void termodynamics(double *matrix, int matrix_dimention,  double **result_matrix)
-{   
+void termodynamics(double *matrix, int matrix_dimention, double **result_matrix)
+{
     double t1 = getTime();
     double *next_matrix = *result_matrix;
     for (int i = 0; i < matrix_dimention; i++)
@@ -41,11 +41,17 @@ void termodynamics(double *matrix, int matrix_dimention,  double **result_matrix
     printf("update time: %.3f\n", t2 - t1);
 }
 
-int main()
+int main(int argc, char **argv)
 {
+    string config_location = "config.ini";
+    if (argc == 2)
+    {
+        // argv[0] - program name
+        config_location = argv[1];
+    }
     double start_time = getTime();
-   
-    auto config = read_config("config.ini");
+
+    auto config = read_config(config_location);
 
     auto MATRIX_DIMENTION = get<0>(config);
     auto MAX_MATRIX_VALUE = get<1>(config);
@@ -55,8 +61,9 @@ int main()
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     double *result_matrix = new double[MATRIX_DIMENTION * MATRIX_DIMENTION];
-  
-    if (DRAW_FREQUENCY > 0) {
+
+    if (DRAW_FREQUENCY > 0)
+    {
         save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
     }
     for (int i = 1; i < MAX_ITERATION_COUNT; i++)
