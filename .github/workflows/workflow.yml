@@ -63,6 +63,7 @@ jobs:
 
   test-sequential-reusable:
     uses: ./.github/workflows/test_reusable.yml
+    needs: [build-sequential]
     with: 
       work_dir: src/sequential
       artifact_name: sequential.sh
