@@ -4,3 +4,4 @@
 *.pgm
 *.gif
 .vscode/
+!src/mif/*.sh

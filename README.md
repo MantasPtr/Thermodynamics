@@ -4,6 +4,7 @@
 
 - [ ] Run on MIF server
 - [ ] Rewrite config to structs
+- [ ] Rewrite data sharing
 - [ ] Implement square split
 - [ ] Add termination on delta
 - [ ] Implement uneven split

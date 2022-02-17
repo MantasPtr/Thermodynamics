@@ -1,5 +1,5 @@
 default: full
-mpi: mpi_compile mpi_run
+mpi: mpi_compile mpi_run_2
 view: gif preview
 full: cleanup mpi view
 m4: cleanup compile mpi_run_4 view 
@@ -30,7 +30,10 @@ test_4: cleanup
 
 compile:
 	mpic++ src_p.cpp ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/config_reader.cpp ../common/time_utils.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c -o program.sh -std=c++17
-mpi_run:
+run:
+	mpirun ./program.sh
+ 
+mpi_run_2:
 	mpirun -n 2 ./program.sh
 mpi_run_4:
 	mpirun -n 4 ./program.sh
