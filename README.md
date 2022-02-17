@@ -2,8 +2,12 @@
 
 ### ToDo list:
 
-- [ ] Run on MIF server
+- [x] Run on MIF server
+- [ ] Make makefile for easier running
+- [ ] Save id to file and check on it
 - [ ] Rewrite config to structs
+- [ ] Run single core
+- [ ] Add debug flag
 - [ ] Rewrite data sharing
 - [ ] Implement square split
 - [ ] Add termination on delta
