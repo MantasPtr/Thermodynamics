@@ -4,6 +4,6 @@
 *.pgm
 *.gif
 .vscode/
-.out
+*.out
 src/mif/*.txt
 !src/mif/*.sh
