@@ -21,9 +21,10 @@ Things left to do:
 
 #### Cluster
 
-- [ ] Make makefile for easier running
-- [ ] Save id to file and check on it
+- [ ] Make test plan configuration
 - [ ] Run single core
+- [X] Make makefile for easier running
+- [X] Save id to file and check on it
 - [x] Run on MIF server
 
 #### Text
@@ -32,5 +33,6 @@ Things left to do:
 
 #### Automatation
 
+- [ ] Add unit tests
 - [ ] Text automation
 - [x] Add integration tests
