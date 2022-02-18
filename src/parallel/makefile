@@ -8,6 +8,7 @@ cleanup:
 	rm -rf ./images/*
 
 ubuntu_install:
+	sudo apt-get update
 	sudo apt-get install mpich
 
 gif:
