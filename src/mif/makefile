@@ -11,7 +11,7 @@ clean-result:
 submit:
 	sbatch mpi-thd-par.sh > status.txt
 	cat status.txt
-	cat status.txt | awk '{print $4}' > id.txt
+	cat status.txt | awk '{print $$4}' > id.txt
 
 status:
 	squeue -j $$(cat id.txt)
