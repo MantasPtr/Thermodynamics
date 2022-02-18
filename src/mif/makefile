@@ -5,6 +5,9 @@ clean:
 	rm status.txt
 	rm id.txt
 
+clean-result:
+	find  /scratch/lustre/home/mape3071/Thermodynamics/src//parallel/ -name *.out -type f -delete
+
 submit:
 	sbatch mpi-thd-par.sh > status.txt
 	cat status.txt
