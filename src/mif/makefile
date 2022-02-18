@@ -11,8 +11,8 @@ submit:
 	cat status.txt | awk '{print $4}' > id.txt
 
 status:
-	squeue -j $(cat id.txt)
+	squeue -j $$(cat id.txt)
 
 output:
-	cat /scratch/lustre/home/mape3071/Thermodynamics/src/parallel/slurm-$(cat id.txt).out
+	cat /scratch/lustre/home/mape3071/Thermodynamics/src/parallel/slurm-$$(cat id.txt).out
 
