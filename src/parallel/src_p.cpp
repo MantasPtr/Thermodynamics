@@ -141,6 +141,7 @@ int main(int argc, char *argv[])
 
         t1 = getTime();
         termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
+        t2 = getTime();
         if ((id == 0 || !debug_only_main_core) && debug_time)
         {
             printf("1 iteration time in process %d: %.3f\n", id, t2 - t1);
