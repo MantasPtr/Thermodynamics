@@ -6,18 +6,18 @@ Things left to do:
 
 #### Code
 
-- [x] Rewrite config to structs
-- [ ] Add debug flag
+- [X] Rewrite config to structs
+- [X] Add debug flag
 - [ ] Rewrite data sharing
 - [ ] Implement square split
 - [ ] Add termination on delta
 - [ ] Implement uneven split
 - [ ] Implement initial matrix config
-- [x] Add time measurement for parallel
-- [x] Add time measurement for sequential
-- [x] Implement draw flag
-- [x] Fix delete performance for parallel
-- [x] Fix delete performance for sequential
+- [X] Add time measurement for parallel
+- [X] Add time measurement for sequential
+- [X] Implement draw flag
+- [X] Fix delete performance for parallel
+- [X] Fix delete performance for sequential
 
 #### Cluster
 
@@ -25,7 +25,7 @@ Things left to do:
 - [ ] Run single core
 - [X] Make makefile for easier running
 - [X] Save id to file and check on it
-- [x] Run on MIF server
+- [X] Run on MIF server
 
 #### Text
 
@@ -36,4 +36,4 @@ Things left to do:
 
 - [ ] Add unit tests
 - [ ] Text automation
-- [x] Add integration tests
+- [X] Add integration tests
