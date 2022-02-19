@@ -9,9 +9,14 @@ struct Configuration
     double max_matrix_value;
 
     int max_iteration_count;
+    double delta;
 
     int draw_frequency;
     bool use_abs_scale;
+
+    bool thread_info;
+    bool iteration_time;
+    bool only_main_core;
 };
 
 Configuration read_config(string filename);

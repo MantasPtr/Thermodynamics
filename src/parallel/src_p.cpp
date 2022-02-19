@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 {
     double start_time = getTime();
 
-    string config_location = "config.ini";
+    string config_location = "";
     if (argc == 2)
     {
         // argv[0] - program name

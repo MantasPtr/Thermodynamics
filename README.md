@@ -30,6 +30,7 @@ Things left to do:
 #### Text
 
 - [ ] Cleanup
+- [ ] Start writing
 
 #### Automatation
 
