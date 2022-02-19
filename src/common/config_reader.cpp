@@ -30,8 +30,8 @@ Configuration read_config(string filename)
     config.draw_frequency = reader.GetInteger("drawing", "draw_frequency", 10);
     config.use_abs_scale = reader.GetBoolean("drawing", "use_abs_scale", false);
 
-    config.thread_info = reader.GetBoolean("debug", "thread_info", false);
-    config.iteration_time = reader.GetBoolean("debug", "iteration_time", false);
+    config.communication_info = reader.GetBoolean("debug", "communication_info", false);
+    config.time_info = reader.GetBoolean("debug", "time_info", false);
     config.only_main_core = reader.GetBoolean("debug", "only_main_core", false);
 
     return config;

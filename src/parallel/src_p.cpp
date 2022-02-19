@@ -13,7 +13,6 @@ using namespace std;
 
 void termodynamics(double *matrix, int dimention_x, int dimention_y, double **result_matrix)
 {
-    double t1 = getTime();
     double *next_matrix = *result_matrix;
 
     for (int i = 0; i < dimention_x; i++)
@@ -36,14 +35,12 @@ void termodynamics(double *matrix, int dimention_x, int dimention_y, double **re
             }
         }
     }
-    double t2 = getTime();
-    printf("update time: %.3f\n", t2 - t1);
 }
 
 int main(int argc, char *argv[])
 {
     double start_time = getTime();
-
+    double t1, t2;
     string config_location = "";
     if (argc == 2)
     {
@@ -51,13 +48,19 @@ int main(int argc, char *argv[])
         config_location = argv[1];
     }
 
+    t1 = getTime();
     Configuration config = read_config(config_location);
-
+    t2 = getTime();
+    printf("config read time: %.3f\n", t2 - t1);
     auto MATRIX_DIMENTION = config.matrix_dimention;
     auto MAX_MATRIX_VALUE = config.max_matrix_value;
     auto MAX_ITERATION_COUNT = config.max_iteration_count;
     auto DRAW_FREQUENCY = config.draw_frequency;
     auto USE_ABS_SCALE = config.use_abs_scale;
+
+    bool debug_communication_info = config.communication_info;
+    bool debug_time = config.time_info;
+    bool debug_only_main_core = config.only_main_core;
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     int id, proc_count;
@@ -77,8 +80,11 @@ int main(int argc, char *argv[])
     double *result_matrix = new double[send_blocksize];
     if (id == 0)
     {
-        printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
-        printf(" - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", work_row_count, block_row_count, send_blocksize, recv_blocksize);
+        if (debug_only_main_core)
+        {
+            printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
+            printf(" - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", work_row_count, block_row_count, send_blocksize, recv_blocksize);
+        }
         double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
         if (DRAW_FREQUENCY > 0)
         {
@@ -93,12 +99,14 @@ int main(int argc, char *argv[])
         // primary process sends data
         if (id == 0)
         {
+            t1 = getTime();
             for (int proc_id = 1; proc_id < proc_count; proc_id++) // TODO: handle 1 processor
             {
                 int offset = proc_id * work_row_count * MATRIX_DIMENTION;
-                printf("send data with offset of %d to processor %i\n", offset, id);
-                printf("Sending data from %d (total of %d, usable %d) to process %d\n", id, send_blocksize, recv_blocksize, proc_id);
-
+                if (debug_communication_info)
+                {
+                    printf("Sending data from %d (total of %d, usable %d, offset %d) to process %d\n", id, send_blocksize, recv_blocksize, offset, proc_id);
+                }
                 MPI_Send(
                     matrix + offset, // TODO: check math for this thing
                     send_blocksize,
@@ -108,6 +116,11 @@ int main(int argc, char *argv[])
                     MPI_COMM_WORLD);
             }
             copy(matrix, matrix + send_blocksize, work_matrix);
+            t2 = getTime();
+            if (debug_time)
+            {
+                printf("main process was sending data for %.3fs \n", t2 - t1);
+            }
         }
         // others processes receive data
         else
@@ -120,14 +133,24 @@ int main(int argc, char *argv[])
                 i,
                 MPI_COMM_WORLD,
                 &com_status);
-            printf("Process %d reveived %d message from process %d.  Error code %d\n", id, i, com_status.MPI_SOURCE, com_status.MPI_ERROR);
+            if (debug_communication_info)
+            {
+                printf("Process %d reveived %d message from process %d.  Error code %d\n", id, i, com_status.MPI_SOURCE, com_status.MPI_ERROR);
+            }
         }
 
+        t1 = getTime();
         termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
+        if ((id == 0 || !debug_only_main_core) && debug_time)
+        {
+            printf("1 iteration time in process %d: %.3f\n", id, t2 - t1);
+        }
+
         swap(work_matrix, result_matrix);
 
         if (id == 0)
         {
+            t1 = getTime();
             // processor 0 did everything locally, so just coping directly to
             // skip row 1
             copy(work_matrix + MATRIX_DIMENTION, work_matrix + MATRIX_DIMENTION + recv_blocksize, matrix + MATRIX_DIMENTION);
@@ -143,12 +166,24 @@ int main(int argc, char *argv[])
                     i,
                     MPI_COMM_WORLD,
                     &com_status);
-                // printf("Primary process reveived %d message from process %d, saved to matrix [%d to %d] \n", i, com_status.MPI_SOURCE, (proc_id * work_row_count + 1) * MATRIX_DIMENTION, (proc_id * work_row_count + 1) * MATRIX_DIMENTION + recv_blocksize);
+
+                if (debug_communication_info)
+                {
+                    printf("Primary process reveived %d message from process %d, saved to matrix [%d to %d] \n", i, com_status.MPI_SOURCE, (proc_id * work_row_count + 1) * MATRIX_DIMENTION, (proc_id * work_row_count + 1) * MATRIX_DIMENTION + recv_blocksize);
+                }
+            }
+            t2 = getTime();
+            if (debug_time)
+            {
+                printf("main process was receiving data for %.3fs \n", t2 - t1);
             }
         }
         else
         {
-            // printf("Sending data back to master process from %d (total of %d)\n", id, recv_blocksize);
+            if (debug_communication_info)
+            {
+                printf("Sending data back to master process from %d (total of %d)\n", id, recv_blocksize);
+            }
             MPI_Send(
                 work_matrix + MATRIX_DIMENTION, // skip first line since its all the same
                 recv_blocksize,
@@ -167,7 +202,7 @@ int main(int argc, char *argv[])
     if (id == 0)
     {
         double end_time = getTime();
-        printf("execution time: %.3f\n", end_time - start_time);
+        printf("Total execution time: %.3f\n", end_time - start_time);
     }
     MPI_Finalize();
 }

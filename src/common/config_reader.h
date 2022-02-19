@@ -14,8 +14,8 @@ struct Configuration
     int draw_frequency;
     bool use_abs_scale;
 
-    bool thread_info;
-    bool iteration_time;
+    bool communication_info;
+    bool time_info;
     bool only_main_core;
 };
 
