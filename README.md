@@ -6,7 +6,7 @@ Things left to do:
 
 #### Code
 
-- [ ] Rewrite config to structs
+- [x] Rewrite config to structs
 - [ ] Add debug flag
 - [ ] Rewrite data sharing
 - [ ] Implement square split
