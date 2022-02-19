@@ -51,13 +51,13 @@ int main(int argc, char **argv)
     }
     double start_time = getTime();
 
-    auto config = read_config(config_location);
+    Configuration config = read_config(config_location);
 
-    auto MATRIX_DIMENTION = get<0>(config);
-    auto MAX_MATRIX_VALUE = get<1>(config);
-    auto MAX_ITERATION_COUNT = get<2>(config);
-    auto DRAW_FREQUENCY = get<3>(config);
-    auto USE_ABS_SCALE = get<4>(config);
+    auto MATRIX_DIMENTION = config.matrix_dimention;
+    auto MAX_MATRIX_VALUE = config.max_matrix_value;
+    auto MAX_ITERATION_COUNT = config.max_iteration_count;
+    auto DRAW_FREQUENCY = config.draw_frequency;
+    auto USE_ABS_SCALE = config.use_abs_scale;
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     double *result_matrix = new double[MATRIX_DIMENTION * MATRIX_DIMENTION];

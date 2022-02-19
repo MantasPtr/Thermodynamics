@@ -4,10 +4,9 @@
 #include "../lib/inih/cpp/INIReader.h"
 #include "config_reader.h"
 
-
 using namespace std;
 
-tuple<int, double, int, int, bool> read_config(string filename)
+Configuration read_config(string filename)
 {
 
     INIReader reader(filename);
@@ -29,10 +28,11 @@ tuple<int, double, int, int, bool> read_config(string filename)
     draw_frequency=10
     use_abs_scale=false
     */
-    return make_tuple(
-        reader.GetInteger("matrix", "matrix_dimention", 1),
-        reader.GetReal("matrix", "max_matrix_value", 1.0),
-        reader.GetInteger("calculation", "max_iteration_count", 1),
-        reader.GetInteger("drawing", "draw_frequency", 10),
-        reader.GetBoolean("drawing", "use_abs_scale", false));
+    Configuration config;
+    config.draw_frequency = reader.GetInteger("drawing", "draw_frequency", 10);
+    config.matrix_dimention = reader.GetInteger("matrix", "matrix_dimention", 1);
+    config.max_matrix_value = reader.GetReal("matrix", "max_matrix_value", 1.0);
+    config.max_iteration_count = reader.GetInteger("calculation", "max_iteration_count", 1);
+    config.use_abs_scale = reader.GetBoolean("drawing", "use_abs_scale", false);
+    return config;
 }

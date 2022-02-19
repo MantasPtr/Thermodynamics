@@ -3,4 +3,15 @@
 
 using namespace std;
 
-tuple<int, double, int, int, bool> read_config(string filename);
+struct Configuration
+{
+    int matrix_dimention;
+    double max_matrix_value;
+
+    int max_iteration_count;
+
+    int draw_frequency;
+    bool use_abs_scale;
+};
+
+Configuration read_config(string filename);
