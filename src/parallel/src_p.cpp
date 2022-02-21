@@ -3,6 +3,7 @@
 #include <mpi.h>
 #include <algorithm>
 #include <tuple>
+#include <iterator>
 
 #include "../common/utils_flat.h"
 #include "../common/display_utils_flat.h"
@@ -27,6 +28,7 @@ public:
     int send_blocksize;
     int recv_blocksize;
     MPI_Status com_status;
+    int mpi_com_tag;
 
     Communicator(ProcConfig arg_proc_config,
                  DebugConfig arg_debug_config,
@@ -38,6 +40,7 @@ public:
         int block_row_count = work_row_count + 2;
         send_blocksize = block_row_count * arg_matrix_config.dimention;
         recv_blocksize = work_row_count * arg_matrix_config.dimention;
+        mpi_com_tag = 1;
     }
 
     void spread(double *matrix, double *work_matrix)
@@ -48,18 +51,20 @@ public:
             for (int proc_id = 1; proc_id < proc_config.proc_count; proc_id++)
             {
                 int offset = proc_id * work_row_count * matrix_config.dimention;
+
                 if (debug_config.communication_info)
                 {
                     printf("Sending data from %d (total of %d, usable %d, offset %d) to process %d\n", proc_config.proc_id, send_blocksize, recv_blocksize, offset, proc_id);
                 }
                 MPI_Send(
-                    matrix + offset, // TODO: check math for this thing
+                    matrix + offset,
                     send_blocksize,
                     MPI_DOUBLE,
                     proc_id,
-                    0,
+                    mpi_com_tag,
                     MPI_COMM_WORLD);
             }
+            printf("--\n");
             copy(matrix, matrix + send_blocksize, work_matrix);
             double t2 = getTime();
             if (debug_config.time_info)
@@ -69,18 +74,72 @@ public:
         }
         else
         {
+            int sender_proc_id = 0;
+            if (debug_config.communication_info)
+            {
+                printf("Process %d Waiting to receive data from %d (total of %d)\n", proc_config.proc_id, sender_proc_id, send_blocksize);
+            }
             MPI_Recv(
                 work_matrix,
                 send_blocksize,
                 MPI_DOUBLE,
-                0,
-                0,
+                sender_proc_id,
+                mpi_com_tag,
                 MPI_COMM_WORLD,
                 &com_status);
             if (debug_config.communication_info)
             {
                 printf("Process %d reveived message from process %d.  Error code %d\n", proc_config.proc_id, com_status.MPI_SOURCE, com_status.MPI_ERROR);
             }
+        }
+    }
+
+    void collect(double *matrix, double *work_matrix)
+    {
+        if (proc_config.proc_id == 0)
+        {
+            double t1 = getTime();
+            // processor 0 did everything locally, so just coping directly to
+            // skip row 1
+            copy(work_matrix + matrix_config.dimention, work_matrix + matrix_config.dimention + recv_blocksize, matrix + matrix_config.dimention);
+            // for others do sending
+            for (int proc_id = 1; proc_id < proc_config.proc_count; proc_id++)
+            {
+
+                int offset = (proc_id * work_row_count + 1) * matrix_config.dimention;
+                MPI_Recv(
+                    matrix + offset,
+                    recv_blocksize,
+                    MPI_DOUBLE,
+                    proc_id,
+                    0,
+                    MPI_COMM_WORLD,
+                    &com_status);
+
+                if (debug_config.communication_info)
+                {
+                    printf("Primary process reveived %d message from process %d, saved to matrix [%d to %d] \n", 0, com_status.MPI_SOURCE, (proc_id * work_row_count + 1) * matrix_config.dimention, (proc_id * work_row_count + 1) * matrix_config.dimention + recv_blocksize);
+                }
+            }
+            double t2 = getTime();
+            if (debug_config.time_info)
+            {
+                printf("main process was receiving data for %.3fs \n", t2 - t1);
+            }
+        }
+        else
+        {
+            if (debug_config.communication_info)
+            {
+                printf("Sending data back to master process from %d (total of %d)\n", proc_config.proc_id, recv_blocksize);
+            }
+            MPI_Send(
+                work_matrix + matrix_config.dimention, // skip first line since its all the same
+                recv_blocksize,
+                MPI_DOUBLE,
+                0,
+                0,
+                MPI_COMM_WORLD);
         }
     }
 };
@@ -137,23 +196,26 @@ int main(int argc, char *argv[])
     bool debug_only_main_core = config.debug.only_main_core;
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
-    int id, proc_count;
     ProcConfig proc_config;
     MPI_Status com_status;
     MPI_Init(&argc, &argv);
-    MPI_Comm_rank(MPI_COMM_WORLD, &id);
-    MPI_Comm_size(MPI_COMM_WORLD, &proc_count);
+    MPI_Comm_rank(MPI_COMM_WORLD, &proc_config.proc_id);
+    MPI_Comm_size(MPI_COMM_WORLD, &proc_config.proc_count);
     // TODO: handle uneven division errors
 
+    Communicator communicator = Communicator(proc_config, config.debug, config.matrix);
+
     // -2 is for first and last row - they are constants, so no computation
-    int work_row_count = (MATRIX_DIMENTION - 2) / proc_count;
+    int work_row_count = (MATRIX_DIMENTION - 2) / proc_config.proc_count;
     // +2 is padding (extra line on top and bellow), used in computation, but not modified
     int block_row_count = work_row_count + 2;
     int send_blocksize = block_row_count * MATRIX_DIMENTION;
     int recv_blocksize = work_row_count * MATRIX_DIMENTION;
-    double *work_matrix = new double[send_blocksize];
-    double *result_matrix = new double[send_blocksize];
-    if (id == 0)
+    cout << " send_blocksize " << send_blocksize << " communicator.send_blocksize " << communicator.send_blocksize << endl;
+
+    double *work_matrix = new double[communicator.send_blocksize];
+    double *result_matrix = new double[communicator.send_blocksize];
+    if (proc_config.proc_id == 0)
     {
         if (debug_only_main_core)
         {
@@ -171,113 +233,34 @@ int main(int argc, char *argv[])
     // going throught termodinamic iterations
     for (int i = 1; i < MAX_ITERATION_COUNT; i++)
     {
-        // primary process sends data
-        if (id == 0)
-        {
-            t1 = getTime();
-            for (int proc_id = 1; proc_id < proc_count; proc_id++) // TODO: handle 1 processor
-            {
-                int offset = proc_id * work_row_count * MATRIX_DIMENTION;
-                if (debug_communication_info)
-                {
-                    printf("Sending data from %d (total of %d, usable %d, offset %d) to process %d\n", id, send_blocksize, recv_blocksize, offset, proc_id);
-                }
-                MPI_Send(
-                    matrix + offset, // TODO: check math for this thing
-                    send_blocksize,
-                    MPI_DOUBLE,
-                    proc_id,
-                    i,
-                    MPI_COMM_WORLD);
-            }
-            copy(matrix, matrix + send_blocksize, work_matrix);
-            t2 = getTime();
-            if (debug_time)
-            {
-                printf("main process was sending data for %.3fs \n", t2 - t1);
-            }
-        }
-        // others processes receive data
-        else
-        {
-            MPI_Recv(
-                work_matrix,
-                send_blocksize,
-                MPI_DOUBLE,
-                0,
-                i,
-                MPI_COMM_WORLD,
-                &com_status);
-            if (debug_communication_info)
-            {
-                printf("Process %d reveived %d message from process %d.  Error code %d\n", id, i, com_status.MPI_SOURCE, com_status.MPI_ERROR);
-            }
-        }
+        // TODO: remove matrix as it is unnecessary
+        communicator.spread(matrix, work_matrix);
 
         t1 = getTime();
         termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
         swap(work_matrix, result_matrix);
         t2 = getTime();
-        if ((id == 0 || !debug_only_main_core) && debug_time)
+
+        if ((proc_config.proc_id == 0 || !debug_only_main_core) && debug_time)
         {
-            printf("1 iteration time in process %d: %.3f\n", id, t2 - t1);
+            printf("1 iteration time in process %d: %.3f\n", proc_config.proc_id, t2 - t1);
         }
 
-        if (id == 0)
-        {
-            t1 = getTime();
-            // processor 0 did everything locally, so just coping directly to
-            // skip row 1
-            copy(work_matrix + MATRIX_DIMENTION, work_matrix + MATRIX_DIMENTION + recv_blocksize, matrix + MATRIX_DIMENTION);
-            for (int proc_id = 1; proc_id < proc_count; proc_id++)
-            {
+        communicator.collect(matrix, work_matrix);
 
-                int offset = (proc_id * work_row_count + 1) * MATRIX_DIMENTION;
-                MPI_Recv(
-                    matrix + offset,
-                    recv_blocksize,
-                    MPI_DOUBLE,
-                    proc_id,
-                    i,
-                    MPI_COMM_WORLD,
-                    &com_status);
-
-                if (debug_communication_info)
-                {
-                    printf("Primary process reveived %d message from process %d, saved to matrix [%d to %d] \n", i, com_status.MPI_SOURCE, (proc_id * work_row_count + 1) * MATRIX_DIMENTION, (proc_id * work_row_count + 1) * MATRIX_DIMENTION + recv_blocksize);
-                }
-            }
-            t2 = getTime();
-            if (debug_time)
-            {
-                printf("main process was receiving data for %.3fs \n", t2 - t1);
-            }
-        }
-        else
-        {
-            if (debug_communication_info)
-            {
-                printf("Sending data back to master process from %d (total of %d)\n", id, recv_blocksize);
-            }
-            MPI_Send(
-                work_matrix + MATRIX_DIMENTION, // skip first line since its all the same
-                recv_blocksize,
-                MPI_DOUBLE,
-                0,
-                i,
-                MPI_COMM_WORLD);
-        }
-
-        if (DRAW_FREQUENCY > 0 && id == 0 && i % DRAW_FREQUENCY == 0)
+        if (DRAW_FREQUENCY > 0 && proc_config.proc_id == 0 && i % DRAW_FREQUENCY == 0)
         {
             printf("%d iterations has passed\n", i);
             save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
         }
     }
-    if (id == 0)
+    if (proc_config.proc_id == 0)
     {
         double end_time = getTime();
         printf("Total execution time: %.3f\n", end_time - start_time);
     }
+    delete matrix;
+    delete work_matrix;
+    delete result_matrix;
     MPI_Finalize();
 }
