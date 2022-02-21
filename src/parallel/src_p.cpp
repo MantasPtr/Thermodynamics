@@ -11,6 +11,80 @@
 
 using namespace std;
 
+struct ProcConfig
+{
+    int proc_id = -1;
+    int proc_count = -1;
+};
+
+class Communicator
+{
+public:
+    ProcConfig proc_config;
+    DebugConfig debug_config;
+    MatrixConfig matrix_config;
+    int work_row_count;
+    int send_blocksize;
+    int recv_blocksize;
+    MPI_Status com_status;
+
+    Communicator(ProcConfig arg_proc_config,
+                 DebugConfig arg_debug_config,
+                 MatrixConfig arg_matrix_config) : proc_config(arg_proc_config), debug_config(arg_debug_config), matrix_config(arg_matrix_config)
+    {
+        // -2 is for first and last row - they are constants, so no computation
+        work_row_count = (arg_matrix_config.dimention - 2) / arg_proc_config.proc_count;
+        // +2 is padding (extra line on top and bellow), used in computation, but not modified
+        int block_row_count = work_row_count + 2;
+        send_blocksize = block_row_count * arg_matrix_config.dimention;
+        recv_blocksize = work_row_count * arg_matrix_config.dimention;
+    }
+
+    void spread(double *matrix, double *work_matrix)
+    {
+        if (proc_config.proc_id == 0)
+        {
+            double t1 = getTime();
+            for (int proc_id = 1; proc_id < proc_config.proc_count; proc_id++)
+            {
+                int offset = proc_id * work_row_count * matrix_config.dimention;
+                if (debug_config.communication_info)
+                {
+                    printf("Sending data from %d (total of %d, usable %d, offset %d) to process %d\n", proc_config.proc_id, send_blocksize, recv_blocksize, offset, proc_id);
+                }
+                MPI_Send(
+                    matrix + offset, // TODO: check math for this thing
+                    send_blocksize,
+                    MPI_DOUBLE,
+                    proc_id,
+                    0,
+                    MPI_COMM_WORLD);
+            }
+            copy(matrix, matrix + send_blocksize, work_matrix);
+            double t2 = getTime();
+            if (debug_config.time_info)
+            {
+                printf("main process was sending data for %.3fs \n", t2 - t1);
+            }
+        }
+        else
+        {
+            MPI_Recv(
+                work_matrix,
+                send_blocksize,
+                MPI_DOUBLE,
+                0,
+                0,
+                MPI_COMM_WORLD,
+                &com_status);
+            if (debug_config.communication_info)
+            {
+                printf("Process %d reveived message from process %d.  Error code %d\n", proc_config.proc_id, com_status.MPI_SOURCE, com_status.MPI_ERROR);
+            }
+        }
+    }
+};
+
 void termodynamics(double *matrix, int dimention_x, int dimention_y, double **result_matrix)
 {
     double *next_matrix = *result_matrix;
@@ -52,18 +126,19 @@ int main(int argc, char *argv[])
     Configuration config = read_config(config_location);
     t2 = getTime();
     printf("config read time: %.3f\n", t2 - t1);
-    auto MATRIX_DIMENTION = config.matrix_dimention;
-    auto MAX_MATRIX_VALUE = config.max_matrix_value;
-    auto MAX_ITERATION_COUNT = config.max_iteration_count;
-    auto DRAW_FREQUENCY = config.draw_frequency;
-    auto USE_ABS_SCALE = config.use_abs_scale;
+    auto MATRIX_DIMENTION = config.matrix.dimention;
+    auto MAX_MATRIX_VALUE = config.matrix.max_value;
+    auto MAX_ITERATION_COUNT = config.calculation.max_iteration_count;
+    auto DRAW_FREQUENCY = config.drawing.draw_frequency;
+    auto USE_ABS_SCALE = config.drawing.use_abs_scale;
 
-    bool debug_communication_info = config.communication_info;
-    bool debug_time = config.time_info;
-    bool debug_only_main_core = config.only_main_core;
+    bool debug_communication_info = config.debug.communication_info;
+    bool debug_time = config.debug.time_info;
+    bool debug_only_main_core = config.debug.only_main_core;
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     int id, proc_count;
+    ProcConfig proc_config;
     MPI_Status com_status;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
@@ -141,13 +216,12 @@ int main(int argc, char *argv[])
 
         t1 = getTime();
         termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
+        swap(work_matrix, result_matrix);
         t2 = getTime();
         if ((id == 0 || !debug_only_main_core) && debug_time)
         {
             printf("1 iteration time in process %d: %.3f\n", id, t2 - t1);
         }
-
-        swap(work_matrix, result_matrix);
 
         if (id == 0)
         {

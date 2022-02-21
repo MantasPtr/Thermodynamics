@@ -23,7 +23,7 @@ void delete_matrix(double *matrix)
     delete matrix;
 }
 
-double *generate_matrix(int matrix_dimention, int max_value)
+double *generate_matrix(int matrix_dimention, double max_value)
 {
     double *matrix = empty_matrix(matrix_dimention);
 

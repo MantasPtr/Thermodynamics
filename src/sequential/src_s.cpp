@@ -53,11 +53,11 @@ int main(int argc, char **argv)
 
     Configuration config = read_config(config_location);
 
-    auto MATRIX_DIMENTION = config.matrix_dimention;
-    auto MAX_MATRIX_VALUE = config.max_matrix_value;
-    auto MAX_ITERATION_COUNT = config.max_iteration_count;
-    auto DRAW_FREQUENCY = config.draw_frequency;
-    auto USE_ABS_SCALE = config.use_abs_scale;
+    auto MATRIX_DIMENTION = config.matrix.dimention;
+    auto MAX_MATRIX_VALUE = config.matrix.max_value;
+    auto MAX_ITERATION_COUNT = config.calculation.max_iteration_count;
+    auto DRAW_FREQUENCY = config.drawing.draw_frequency;
+    auto USE_ABS_SCALE = config.drawing.use_abs_scale;
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
     double *result_matrix = new double[MATRIX_DIMENTION * MATRIX_DIMENTION];
