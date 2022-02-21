@@ -5,8 +5,8 @@ using namespace std;
 
 struct MatrixConfig
 {
-    int matrix_dimention;
-    double max_matrix_value;
+    int dimention;
+    double max_value;
 };
 
 struct CalculationConfig
