@@ -47,7 +47,6 @@ public:
     {
         if (proc_config.proc_id == 0)
         {
-            double t1 = getTime();
             for (int proc_id = 1; proc_id < proc_config.proc_count; proc_id++)
             {
                 int offset = proc_id * work_row_count * matrix_config.dimention;
@@ -66,11 +65,6 @@ public:
             }
             printf("--\n");
             copy(matrix, matrix + send_blocksize, work_matrix);
-            double t2 = getTime();
-            if (debug_config.time_info)
-            {
-                printf("main process was sending data for %.3fs \n", t2 - t1);
-            }
         }
         else
         {
@@ -98,7 +92,6 @@ public:
     {
         if (proc_config.proc_id == 0)
         {
-            double t1 = getTime();
             // processor 0 did everything locally, so just coping directly to
             // skip row 1
             copy(work_matrix + matrix_config.dimention, work_matrix + matrix_config.dimention + recv_blocksize, matrix + matrix_config.dimention);
@@ -120,11 +113,6 @@ public:
                 {
                     printf("Primary process reveived %d message from process %d, saved to matrix [%d to %d] \n", 0, com_status.MPI_SOURCE, (proc_id * work_row_count + 1) * matrix_config.dimention, (proc_id * work_row_count + 1) * matrix_config.dimention + recv_blocksize);
                 }
-            }
-            double t2 = getTime();
-            if (debug_config.time_info)
-            {
-                printf("main process was receiving data for %.3fs \n", t2 - t1);
             }
         }
         else
@@ -184,7 +172,7 @@ int main(int argc, char *argv[])
     t1 = getTime();
     Configuration config = read_config(config_location);
     t2 = getTime();
-    printf("config read time: %.3f\n", t2 - t1);
+
     auto MATRIX_DIMENTION = config.matrix.dimention;
     auto MAX_MATRIX_VALUE = config.matrix.max_value;
     auto MAX_ITERATION_COUNT = config.calculation.max_iteration_count;
@@ -192,7 +180,6 @@ int main(int argc, char *argv[])
     auto USE_ABS_SCALE = config.drawing.use_abs_scale;
 
     bool debug_communication_info = config.debug.communication_info;
-    bool debug_time = config.debug.time_info;
     bool debug_only_main_core = config.debug.only_main_core;
 
     double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
@@ -201,6 +188,12 @@ int main(int argc, char *argv[])
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &proc_config.proc_id);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_config.proc_count);
+
+    bool debug_time = (proc_config.proc_id == 0 || !debug_only_main_core) && config.debug.time_info;
+    if (debug_time)
+    {
+        printf("config read time: %.3f\n", t2 - t1);
+    }
     // TODO: handle uneven division errors
 
     Communicator communicator = Communicator(proc_config, config.debug, config.matrix);
@@ -211,7 +204,6 @@ int main(int argc, char *argv[])
     int block_row_count = work_row_count + 2;
     int send_blocksize = block_row_count * MATRIX_DIMENTION;
     int recv_blocksize = work_row_count * MATRIX_DIMENTION;
-    cout << " send_blocksize " << send_blocksize << " communicator.send_blocksize " << communicator.send_blocksize << endl;
 
     double *work_matrix = new double[communicator.send_blocksize];
     double *result_matrix = new double[communicator.send_blocksize];
@@ -234,20 +226,31 @@ int main(int argc, char *argv[])
     for (int i = 1; i < MAX_ITERATION_COUNT; i++)
     {
         // TODO: remove matrix as it is unnecessary
+        if (debug_time)
+        {
+            t1 = getTime();
+        }
         communicator.spread(matrix, work_matrix);
-
-        t1 = getTime();
+        if (debug_time)
+        {
+            t2 = getTime();
+            printf("Spreading data on proc %d took: %.3f s\n", proc_config.proc_id, t2 - t1);
+            t1 = getTime();
+        }
         termodynamics(work_matrix, block_row_count, MATRIX_DIMENTION, &result_matrix);
         swap(work_matrix, result_matrix);
-        t2 = getTime();
-
-        if ((proc_config.proc_id == 0 || !debug_only_main_core) && debug_time)
+        if (debug_time)
         {
-            printf("1 iteration time in process %d: %.3f\n", proc_config.proc_id, t2 - t1);
+            t2 = getTime();
+            printf("%d iteration - process %d - time to calculate: %.3f s\n", i, proc_config.proc_id, t2 - t1);
+            t1 = getTime();
         }
-
         communicator.collect(matrix, work_matrix);
-
+        if (debug_time)
+        {
+            t2 = getTime();
+            printf("Collecting data from process %d: %.3f s\n", proc_config.proc_id, t2 - t1);
+        }
         if (DRAW_FREQUENCY > 0 && proc_config.proc_id == 0 && i % DRAW_FREQUENCY == 0)
         {
             printf("%d iterations has passed\n", i);
