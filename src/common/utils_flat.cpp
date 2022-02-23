@@ -5,17 +5,22 @@ int sqr(int x)
     return x * x;
 }
 
-double *empty_matrix(int matrix_dimention)
+double *empty_partial_matrix(int dim_x, int dim_y)
 {
     // Innitiate
-    double *matrix = new double[matrix_dimention * matrix_dimention];
-    for (int i = 0; i < matrix_dimention; i++)
+    double *matrix = new double[dim_x * dim_y];
+    // Clean matrix
+    for (int i = 0; i < dim_x; i++)
     {
-        // Clean matrix
-        for (int j = 0; j < matrix_dimention; j++)
-            matrix[i * matrix_dimention + j] = 0.0;
+        for (int j = 0; j < dim_y; j++)
+            matrix[i * dim_x + j] = 0.0;
     }
     return matrix;
+}
+
+double *empty_matrix(int matrix_dimention)
+{
+    return empty_partial_matrix(matrix_dimention, matrix_dimention);
 }
 
 void delete_matrix(double *matrix)
@@ -25,7 +30,12 @@ void delete_matrix(double *matrix)
 
 double *generate_matrix(int matrix_dimention, double max_value)
 {
-    double *matrix = empty_matrix(matrix_dimention);
+    return generate_part_of_the_matrix(matrix_dimention, max_value, 0, matrix_dimention, 0, matrix_dimention);
+}
+
+double *generate_part_of_the_matrix(int matrix_dimention, double max_value, int row_start, int row_end, int column_start, int column_end)
+{
+    double *matrix = empty_partial_matrix(row_end - row_start, column_end - column_start);
 
     // // fill sequence
     // for (int i = 0; i < matrix_dimention; i++)
@@ -43,16 +53,15 @@ double *generate_matrix(int matrix_dimention, double max_value)
     int radius1 = (int)((center_x + matrix_dimention) / 5);
     int radius2 = (int)((center_x + matrix_dimention) / 6);
 
-    for (int i = 0; i < matrix_dimention; i++)
+    for (int i = column_start; i < column_end; i++)
     {
-        for (int j = 0; j < matrix_dimention; j++)
+        for (int j = row_start; j < row_end; j++)
         {
             bool is_inside_outer = sqr(i - center_x) + sqr(j - center_y) <= sqr(radius1);
             bool is_inside_inner = sqr(i - center_x) + sqr(j - center_y) <= sqr(radius2);
             matrix[i * matrix_dimention + j] = is_inside_outer && !is_inside_inner ? max_value : 0.0;
         }
     }
-
     // fill corner
 
     // int center = (int)(matrix_dimention / 2);
