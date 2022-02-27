@@ -1,7 +1,7 @@
 default: cleanup mpi
 mpi: compile mpi_run_2
 view: gif preview
-m4: cleanup compile mpi_run_4 view 
+m4: cleanup compile mpi_run_4 
 
 cleanup:
 	rm -rf ./images/*
