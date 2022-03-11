@@ -43,6 +43,7 @@ public:
     MatrixCoordinates matrix_coordinates;
     double *current_matrix;
     double *temp_matrix;
+    int block_row_count;
 
     FullCommunicator(ProcConfig arg_proc_config,
                      DebugConfig arg_debug_config,
@@ -51,7 +52,7 @@ public:
         // -2 is for first and last row - they are constants, so no computation
         work_row_count = (arg_matrix_config.dimention - 2) / arg_proc_config.proc_count;
         // +2 is padding (extra line on top and bellow), used in computation, but not modified
-        int block_row_count = work_row_count + 2;
+        block_row_count = work_row_count + 2;
         send_blocksize = block_row_count * arg_matrix_config.dimention;
         recv_blocksize = work_row_count * arg_matrix_config.dimention;
         // row split
@@ -65,6 +66,11 @@ public:
         temp_matrix = new double[send_blocksize];
 
         mpi_com_tag = 1;
+
+        if (proc_config.proc_id == 0 && debug_config.only_main_core)
+        {
+            printf(" - Matrix size - %d rows \n - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", matrix_config.dimention, work_row_count, block_row_count, send_blocksize, recv_blocksize);
+        }
     }
 
     double *get_intial_matrix()
@@ -193,6 +199,115 @@ void termodynamics(double *matrix, int dimention_x, int dimention_y, double **re
     }
 }
 
+class RowCommunicator : public FullCommunicator
+{
+public:
+    int communication_size;
+    int proc_id_before;
+    int proc_id_after;
+    MPI_Request request_send_before;
+    MPI_Request request_send_after;
+    MPI_Request request_recv_before;
+    MPI_Request request_recv_after;
+    RowCommunicator(ProcConfig arg_proc_config,
+                    DebugConfig arg_debug_config,
+                    MatrixConfig arg_matrix_config) : FullCommunicator(arg_proc_config,
+                                                                       arg_debug_config,
+                                                                       arg_matrix_config)
+    {
+        communication_size = matrix_config.dimention - 2;
+        proc_id_before = proc_config.proc_id - 1;
+        proc_id_after = proc_config.proc_id + 1;
+    };
+
+    void send()
+    {
+        if (proc_id_before >= 0)
+            MPI_Isend(current_matrix + 1, communication_size, MPI_DOUBLE, proc_id_before, mpi_com_tag, MPI_COMM_WORLD, &request_send_after);
+        if (proc_id_after < proc_config.proc_count)
+            MPI_Isend(current_matrix + matrix_config.dimention * (work_row_count - 1) + 1, communication_size, MPI_DOUBLE, proc_id_after, mpi_com_tag, MPI_COMM_WORLD, &request_send_before);
+    };
+
+    void receive()
+    {
+        if (proc_id_after < proc_config.proc_count)
+            MPI_Irecv(current_matrix + 1, communication_size, MPI_DOUBLE, proc_id_after, mpi_com_tag, MPI_COMM_WORLD, &request_recv_before);
+        if (proc_id_before >= 0)
+            MPI_Irecv(current_matrix + matrix_config.dimention * (work_row_count - 1) + 1, communication_size, MPI_DOUBLE, proc_id_before, mpi_com_tag, MPI_COMM_WORLD, &request_recv_after);
+    };
+
+    void wait_for_communication()
+    {
+        if (proc_id_after < proc_config.proc_count)
+        {
+            MPI_Wait(&request_recv_after, MPI_STATUS_IGNORE);
+            MPI_Wait(&request_send_after, MPI_STATUS_IGNORE);
+        }
+        if (proc_id_before >= 0)
+        {
+            MPI_Wait(&request_recv_before, MPI_STATUS_IGNORE);
+            MPI_Wait(&request_send_before, MPI_STATUS_IGNORE);
+        }
+    }
+
+    void get_all(double **full_matrix)
+    {
+        if (proc_config.proc_id == 0)
+        {
+            // processor 0 did everything locally, so just coping directly to
+            // skip row 1
+            copy(current_matrix, current_matrix + send_blocksize, full_matrix);
+            // for others do sending
+            for (int proc_id = 1; proc_id < proc_config.proc_count; proc_id++)
+            {
+
+                int offset = (proc_id * work_row_count) * matrix_config.dimention;
+                MPI_Recv(
+                    full_matrix + offset,
+                    send_blocksize,
+                    MPI_DOUBLE,
+                    proc_id,
+                    0,
+                    MPI_COMM_WORLD,
+                    &com_status);
+
+                if (debug_config.communication_info)
+                {
+                    printf("Primary process reveived %d message from process %d, saved to matrix [%d to %d] \n", 0, com_status.MPI_SOURCE, (proc_id * work_row_count + 1) * matrix_config.dimention, (proc_id * work_row_count + 1) * matrix_config.dimention + recv_blocksize);
+                }
+            }
+        }
+        else
+        {
+            if (debug_config.communication_info)
+            {
+                printf("Sending data back to master process from %d (total of %d)\n", proc_config.proc_id, send_blocksize);
+            }
+            MPI_Send(
+                current_matrix, // skip first line since its all the same
+                send_blocksize,
+                MPI_DOUBLE,
+                0,
+                0,
+                MPI_COMM_WORLD);
+        }
+        // TODO - make async
+    }
+
+    void do_termodynamics()
+    {
+        termodynamics(current_matrix, block_row_count, matrix_config.dimention, &temp_matrix);
+        swap(current_matrix, temp_matrix);
+    }
+
+    void communicate()
+    {
+        receive();
+        send();
+        wait_for_communication();
+    };
+};
+
 int main(int argc, char *argv[])
 {
     double start_time = getTime();
@@ -231,70 +346,107 @@ int main(int argc, char *argv[])
     }
     // TODO: handle uneven division errors
 
-    FullCommunicator communicator = FullCommunicator(proc_config, config.debug, config.matrix);
+    bool use_full_communicator = false;
 
-    // -2 is for first and last row - they are constants, so no computation
-    int work_row_count = (MATRIX_DIMENTION - 2) / proc_config.proc_count;
-    // +2 is padding (extra line on top and bellow), used in computation, but not modified
-    int block_row_count = work_row_count + 2;
-    int send_blocksize = block_row_count * MATRIX_DIMENTION;
-    int recv_blocksize = work_row_count * MATRIX_DIMENTION;
-
-    if (proc_config.proc_id == 0)
+    if (use_full_communicator)
     {
-        if (debug_only_main_core)
+
+        FullCommunicator communicator = FullCommunicator(proc_config, config.debug, config.matrix);
+
+        // -2 is for first and last row - they are constants, so no computation
+        int work_row_count = (MATRIX_DIMENTION - 2) / proc_config.proc_count;
+        // +2 is padding (extra line on top and bellow), used in computation, but not modified
+        int block_row_count = work_row_count + 2;
+        int send_blocksize = block_row_count * MATRIX_DIMENTION;
+        int recv_blocksize = work_row_count * MATRIX_DIMENTION;
+
+        if (proc_config.proc_id == 0)
         {
-            printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
-            printf(" - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", work_row_count, block_row_count, send_blocksize, recv_blocksize);
+            if (debug_only_main_core)
+            {
+                printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
+                printf(" - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", work_row_count, block_row_count, send_blocksize, recv_blocksize);
+            }
+            if (DRAW_FREQUENCY > 0)
+            {
+                // save initial matrix value for visualization
+                save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
+            }
         }
-        if (DRAW_FREQUENCY > 0)
+
+        // going throught termodinamic iterations
+        for (int i = 1; i < MAX_ITERATION_COUNT; i++)
         {
-            // save initial matrix value for visualization
-            save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
+            // TODO: remove matrix as it is unnecessary
+            if (debug_time)
+            {
+                t1 = getTime();
+            }
+            communicator.spread(matrix);
+            if (debug_time)
+            {
+                t2 = getTime();
+                printf("Spreading data on proc %d took: %.3f s\n", proc_config.proc_id, t2 - t1);
+                t1 = getTime();
+            }
+            termodynamics(communicator.current_matrix, block_row_count, MATRIX_DIMENTION, &communicator.temp_matrix);
+            swap(communicator.current_matrix, communicator.temp_matrix);
+            if (debug_time)
+            {
+                t2 = getTime();
+                printf("%d iteration - process %d - time to calculate: %.3f s\n", i, proc_config.proc_id, t2 - t1);
+                t1 = getTime();
+            }
+            communicator.collect(matrix);
+            if (debug_time)
+            {
+                t2 = getTime();
+                printf("Collecting data from process %d: %.3f s\n", proc_config.proc_id, t2 - t1);
+            }
+            if (DRAW_FREQUENCY > 0 && proc_config.proc_id == 0 && i % DRAW_FREQUENCY == 0)
+            {
+                printf("%d iterations has passed\n", i);
+                save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
+            }
+        }
+        if (proc_config.proc_id == 0)
+        {
+            double end_time = getTime();
+            printf("Total execution time: %.3f\n", end_time - start_time);
+        }
+        delete matrix;
+        communicator.cleanup();
+    }
+    else
+    {
+        RowCommunicator rowCommunicator = RowCommunicator(proc_config, config.debug, config.matrix);
+        rowCommunicator.current_matrix = rowCommunicator.get_intial_matrix();
+        if (proc_config.proc_id == 0)
+        {
+            if (debug_only_main_core)
+            {
+                printf(" - Matrix dimention %d \n - Iteration count %d \n - Draw interval %d \n - Will generate %d images \n", MATRIX_DIMENTION, MAX_ITERATION_COUNT, DRAW_FREQUENCY, (DRAW_FREQUENCY == 0) ? 0 : (MAX_ITERATION_COUNT / DRAW_FREQUENCY));
+                printf(" - Each thread will process %d rows \n - Each thread will receive %d rows \n - Each thread will receive %d numbers \n - Each thread will send back %d numbers \n", work_row_count, block_row_count, send_blocksize, recv_blocksize);
+            }
+            if (DRAW_FREQUENCY > 0)
+            {
+                // save initial matrix value for visualization
+                save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
+            }
+        }
+        for (int i = 1; i < MAX_ITERATION_COUNT; i++)
+        {
+            if (debug_time)
+            {
+                t1 = getTime();
+            }
+            rowCommunicator.communicate();
+            if (debug_time)
+            {
+                t2 = getTime();
+                printf("%d iteration - time to calculate: %.3f s\n", i, proc_config.proc_id, t2 - t1);
+            }
         }
     }
-
-    // going throught termodinamic iterations
-    for (int i = 1; i < MAX_ITERATION_COUNT; i++)
-    {
-        // TODO: remove matrix as it is unnecessary
-        if (debug_time)
-        {
-            t1 = getTime();
-        }
-        communicator.spread(matrix);
-        if (debug_time)
-        {
-            t2 = getTime();
-            printf("Spreading data on proc %d took: %.3f s\n", proc_config.proc_id, t2 - t1);
-            t1 = getTime();
-        }
-        termodynamics(communicator.current_matrix, block_row_count, MATRIX_DIMENTION, &communicator.temp_matrix);
-        swap(communicator.current_matrix, communicator.temp_matrix);
-        if (debug_time)
-        {
-            t2 = getTime();
-            printf("%d iteration - process %d - time to calculate: %.3f s\n", i, proc_config.proc_id, t2 - t1);
-            t1 = getTime();
-        }
-        communicator.collect(matrix);
-        if (debug_time)
-        {
-            t2 = getTime();
-            printf("Collecting data from process %d: %.3f s\n", proc_config.proc_id, t2 - t1);
-        }
-        if (DRAW_FREQUENCY > 0 && proc_config.proc_id == 0 && i % DRAW_FREQUENCY == 0)
-        {
-            printf("%d iterations has passed\n", i);
-            save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
-        }
-    }
-    if (proc_config.proc_id == 0)
-    {
-        double end_time = getTime();
-        printf("Total execution time: %.3f\n", end_time - start_time);
-    }
-    delete matrix;
-    communicator.cleanup();
     MPI_Finalize();
 }

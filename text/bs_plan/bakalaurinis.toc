@@ -1,0 +1,73 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{lithuanian}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Įvadas}{4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1.}Medžiagos darbo tema dėstymo skyriai}{5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.1.}Poskyris}{5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {1.1.1.}Skirsnis}{5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{\numberline {1.1.1.1.}Straipsnis}{5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {1.1.2.}Skirsnis}{5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.}Skyrius}{6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1.}Poskyris}{6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.2.}Poskyris}{6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Rezultatai ir išvados}{7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Literatūra}{8}%
+\defcounter {refsection}{0}\relax 
+\bgroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{english}
+\defcounter {refsection}{0}\relax 
+\egroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{lithuanian}
+\defcounter {refsection}{0}\relax 
+\bgroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{english}
+\defcounter {refsection}{0}\relax 
+\egroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{lithuanian}
+\defcounter {refsection}{0}\relax 
+\bgroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{english}
+\defcounter {refsection}{0}\relax 
+\egroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{lithuanian}
+\defcounter {refsection}{0}\relax 
+\bgroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{english}
+\defcounter {refsection}{0}\relax 
+\egroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{lithuanian}
+\defcounter {refsection}{0}\relax 
+\bgroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{english}
+\defcounter {refsection}{0}\relax 
+\egroup 
+\defcounter {refsection}{0}\relax 
+\selectlanguage *{lithuanian}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Santrumpos}{9}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\MakeUppercase {Priedai}}{9}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{1 priedas.\nobreakspace {}Neuroninio tinklo struktūra}{10}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{2 priedas.\nobreakspace {}Eksperimentinio palyginimo rezultatai}{11}%

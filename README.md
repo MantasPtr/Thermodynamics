@@ -32,7 +32,7 @@ Things left to do:
 - [ ] Cleanup
 - [ ] Start writing
 
-#### Automatation
+#### Automation
 
 - [ ] Add unit tests
 - [ ] Text automation
