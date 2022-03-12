@@ -1,14 +1,17 @@
+fileName = bakalaurinis
+
+
 default: generuoti removeGenerated
 
 generuoti:
-	xelatex bakalaurinis.tex
-	biber bakalaurinis
-	xelatex bakalaurinis.tex
-	open bakalaurinis.pdf || xdg-open bakalaurinis.pdf
+	xelatex $(fileName).tex
+	biber $(fileName)
+	xelatex $(fileName).tex
+	xdg-open $(fileName).pdf
 
 
 removeGenerated:
-	rm -f $(fileName).toc $(fileName).run.xml $(fileName).log $(fileName).blg $(fileName).bcf $(fileName).bbl $(fileName).aux
+	rm -f $(fileName).toc $(fileName).run.xml $(fileName).log $(fileName).blg $(fileName).bcf $(fileName).bbl $(fileName).aux $(fileName).fls $(fileName).fdb_laxexmk 
 
 ubuntu:
 	echo "Diegiamas LaTeX (PdfLaTeX, XeTeX ir kt.)"
@@ -19,6 +22,10 @@ ubuntu:
 	sudo apt-get install fonts-texgyre
 	echo "Diegiamas Palemonas šriftas į sistemą"
 	sudo cp -r Palemonas-2.1 /usr/share/fonts/truetype/
+
+
+text:
+	pdftotext bakalaurinis.pdf tekstas.txt
 
 clean:
 	git clean -dfx

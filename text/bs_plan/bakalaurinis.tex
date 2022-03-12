@@ -16,15 +16,16 @@
 % Titulinio aprašas
 \university{Vilniaus universitetas}
 \faculty{Matematikos ir informatikos fakultetas}
-\institute{Informatikos institutas}  % Užkomentavus šią eilutę - institutas neįtraukiamas į titulinį
+% \institute{Informatikos institutas}  % Užkomentavus šią eilutę - institutas neįtraukiamas į titulinį
 \department{Programų sistemų bakalauro studijų programa}
-\papertype{Bakalauro baigiamasis darbas}
-\title{Programų sistemų kūrimo metodų tyrimas}
-\titleineng{Investigation Methods of Software Development}
-\author{Vardenis Pavardenis}
+\papertype{Bakalauro baigiamojo darbo planas}
+
+\title{Šilumos laidumo uždavinio lygiagretinimo tyrimas naudojant centrinius ir grafinius procesorius}
+\titleineng{Steady-state heat equasion parallization analysis on CPU and GPU}
+\author{Mantas Petrikas}
 % \secondauthor{Vardonis Pavardonis}   % Pridėti antrą autorių
-\supervisor{prof. habil. dr. Vardaitis Pavardaitis}
-\reviewer{doc. dr. Vardauskas Pavardauskas}
+\supervisor{dr. Rokas Astrauskas}
+% \reviewer{doc. dr. Vardauskas Pavardauskas}
 \date{Vilnius – \the\year}
 
 % Nustatymai
@@ -41,63 +42,104 @@
 %     Padėkos asmenims ir/ar organizacijoms
 % \end{center}
 
-\sectionnonumnocontent{Santrauka}
-Glaustai aprašomas darbo turinys: pristatoma nagrinėta problema ir padarytos
-išvados. Santraukos apimtis ne didesnė nei 0,5 puslapio. Santraukų gale
-nurodomi darbo raktiniai žodžiai. 
-% Nurodomi iki 5 svarbiausių temos raktinių žodžių (terminų).
+% \sectionnonumnocontent{Santrauka}
+% Glaustai aprašomas darbo turinys: pristatoma nagrinėta problema ir padarytos
+% išvados. Santraukos apimtis ne didesnė nei 0,5 puslapio. Santraukų gale
+% nurodomi darbo raktiniai žodžiai. 
+% % Nurodomi iki 5 svarbiausių temos raktinių žodžių (terminų).
 % Vienas terminas gali susidėti iš kelių žodžių.
-\raktiniaizodziai{raktinis žodis 1, raktinis žodis 2, raktinis žodis 3, raktinis žodis 4, raktinis žodis 5}   
+% \raktiniaizodziai{raktinis žodis 1, raktinis žodis 2, raktinis žodis 3, raktinis žodis 4, raktinis žodis 5}   
 
-\sectionnonumnocontent{Summary}
-Santrauka anglų kalba. Santraukos apimtis ne didesnė nei 0,5 puslapio.
-\keywords{keyword 1, keyword 2, keyword 3, keyword 4, keyword 5}
+% \sectionnonumnocontent{Summary}
+% Santrauka anglų kalba. Santraukos apimtis ne didesnė nei 0,5 puslapio.
+% \keywords{keyword 1, keyword 2, keyword 3, keyword 4, keyword 5}
 
-\tableofcontents
+% \tableofcontents
 
-\sectionnonum{Įvadas}
-Įvade nurodomas darbo tikslas ir uždaviniai, kuriais bus įgyvendinamas tikslas,
-aprašomas temos aktualumas, apibrėžiamas tiriamasis objektas akcentuojant
-neapibrėžtumą, kuris bus išspręstas darbe, aptariamos teorinės darbo prielaidos
-bei metodika, apibūdinami su tema susiję literatūros ar kitokie šaltiniai,
-temos analizės tvarka, darbo atlikimo aplinkybės, pateikiama žinių apie
-naudojamus instrumentus (programas ir kt., jei darbe yra eksperimentinė dalis).
-Darbo įvadas neturi būti dėstymo santrauka. Įvado apimtis 2 -- 4 puslapiai.
 
-\section{Medžiagos darbo tema dėstymo skyriai}
-Medžiagos darbo tema dėstymo skyriuose išsamiai pateikiamos nagrinėjamos temos
-detalės: pradiniai duomenys, jų analizės ir apdorojimo metodai, sprendimų
-įgyvendinimas, gautų rezultatų apibendrinimas.
+\sectionnonum{Darbo planas}
 
-Medžiaga turi būti dėstoma aiškiai, pateikiant argumentus. Tekste dėstomas
-trečiuoju asmeniu, t.y. rašoma ne „aš manau“, bet „autorius mano“, „autoriaus
-nuomone“. Reikėtų vengti informacijos nesuteikiančių frazių, pvz., „...kaip jau
-buvo minėta...“, „...kaip visiems žinoma...“ ir pan., vengti grožinės
-literatūros ar publicistinio stiliaus, gausių metaforų ar panašių meninės
-išraiškos priemonių.
+Bakalauriniame darbe bus tiriamos šilumos lygties paralelizavimo galimybes naudojant centrinius(ang. CPU) ir grafinių procesorius (ang. GPU).
 
-Skyriai gali turėti poskyrius ir smulkesnes sudėtines dalis, kaip punktus ir
-papunkčius.
+\subsectionnonum{Darbo tikslas ir uždaviniai}
 
-\subsection{Poskyris}
-Citavimo pavyzdžiai: cituojamas vienas šaltinis \cite{PvzStraipsnLt}; cituojami
-keli šaltiniai \cite{PvzStraipsnEn, PvzKonfLt, PvzKonfEn, PvzKnygLt, PvzKnygEn,
-PvzElPubLt, PvzElPubEn, PvzMagistrLt, PvzPhdEn}.
+Darbo tikslas - įvertinti ir palyginti šilumos laidumo uždavinio algoritimo efektyvumą naudojant centrinius ir grafinius procesorius.
 
-\subsubsection{Skirsnis}
-\subsubsubsection{Straipsnis}
-\subsubsection{Skirsnis}
-\section{Skyrius}
-\subsection{Poskyris}
-\subsection{Poskyris}
+Uždaviniai:
+\begin{itemize}
+    \item suprojektuoti ir implementuoti šilomos uždavinio sprendimo algorimtą, naudojantį grafinių procesorių resursus
+    \item įvertinti grafinius procesorius naudojančio algoritmo našumą ir praktiškumą palyginant su centrinius procesoriu naudojančiu algoritmu.
+    \item Nustatyti algoritmo našumo pagerėjimą naudojant
+\end{itemize}
 
-\sectionnonum{Rezultatai ir išvados}
-Rezultatų ir išvadų dalyje išdėstomi pagrindiniai darbo rezultatai (kažkas
-išanalizuota, kažkas sukurta, kažkas įdiegta), toliau pateikiamos išvados
-(daromi nagrinėtų problemų sprendimo metodų palyginimai, siūlomos
-rekomendacijos, akcentuojamos naujovės). Rezultatai ir išvados pateikiami
-sunumeruotų (gali būti hierarchiniai) sąrašų pavidalu. Darbo rezultatai turi
-atitikti darbo tikslą.
+\subsectionnonum{Darbo eiga}
+
+Darbo teorinėjė dalyje bus atžvelgiamas šilumos laidumo uždavinys, jo pritaikymo ir praplėtimo galimybes.
+Darbe bus atliekama literatūros analyzė, nagrinėjami CPU ir GPU architectūriniai skirtumai, siekiant apžvelgti ir įvertinti technologijų pritaikomomumą, privalumus ir trukūmus spendžiant šilumos pasiskirtymo patovios busenos (ang. steady-state heat distribution) uždavinį.
+Darbo metu bus nagrinėjamas ir įgyvendimas šilumos lygties sprendimas apribotoje dvimatinėjė erdvėje, kurioje kraštų temperatūros yra žinomos ir nekintančios.
+Darbe bus apžvelgiami vertimo kriterijai, kurias galima įvertinti ir palyginti algoritmo našumą, praktines taikymo galimybes ir kaštus. Bus įvedami kriterijai reikalinti palyginti algoritmo našumą naudojant centinius ir grafinius procesorius.
+Taip pat bus apžvelgiamas vienodos atminties prieigos (ang. UMA - uniform memory access) ir nevienodos atminties prieiga (ang. NUMA - non uniform memory access) programų architetūra, įvertinant jų trūkumus ir privalumus. 
+
+Darbo praktinėjė dalyje bus įgyvendimas nuoseklus algoritmas naudojant 1 centrinį procesorių, įvertinamas algoritmo našumas. 
+Taip pat bus įgyvendimas paralelizuotas šilumos lygties spendimo algoritmas, įvertimas algortimo teorinis ir praktinis pagreitėjimas keičiant programos parametrus ir procesorių skaičių.
+Apžvelgiami lygiagretino technologijos ir algortimo pakeitimai reikalingi paleisti algoritmą naudojant grafinius procesorius. Įgyvendimas lygiagretus algoritmas naudojant 1 grafinį procesorių. Įvertimas algoritmo pagreitėjimas, keičiant algoritmo parametrus. 
+Palyginimas algorimto veikimas naudojant centrinis ir grafinius procesius. Apžvelgiamos lygiagretinimo algoritmo galimybės naudojant kelis grafinius procesorius, su galimybę įgyvendinti ir ištirti algoritmo našumą naudojant kelis grafinius procesorius.
+
+
+% kuriame pateikiami tyrimo objektas ir aktualumas, darbo tikslas, keliami už-
+% daviniai ir laukiami rezultatai, tyrimo metodai, numatomas darbo atlikimo procesas, apibūdi-
+% nami darbui aktualūs literatūros šaltiniai.
+% Pastaba. Darbo uždavinyje apibrėžiamas siekiamas rezultatas, kad būtų galimybė išmatuoti,
+% ar tikslai ir uždaviniai yra išspręsti, bei kokiu lygiu (vertinant kiekybę bei kokybę). Pavyz-
+% džiui, „Atlikti literatūros .... analizę“ nėra tinkamas uždavinys, nes nusako procesą, tačiau
+% neapibrėžia jo rezultato. Tinkamos uždavinio formuluotės šablonai: „Išanalizuoti literatūrą
+% ... siekiant apžvelgti ir įvertinti /... metodų tinkamumą sprendžiamam uždaviniui/privalu-
+% mus ir trūkumus sprendžiant ... uždavinį/rekomenduojamas ... projektavimo gaires, šablonus
+% ir pan.
+
+% \sectionnonum{Įvadas}
+% Įvade nurodomas darbo tikslas ir uždaviniai, kuriais bus įgyvendinamas tikslas,
+% aprašomas temos aktualumas, apibrėžiamas tiriamasis objektas akcentuojant
+% neapibrėžtumą, kuris bus išspręstas darbe, aptariamos teorinės darbo prielaidos
+% bei metodika, apibūdinami su tema susiję literatūros ar kitokie šaltiniai,
+% temos analizės tvarka, darbo atlikimo aplinkybės, pateikiama žinių apie
+% naudojamus instrumentus (programas ir kt., jei darbe yra eksperimentinė dalis).
+% Darbo įvadas neturi būti dėstymo santrauka. Įvado apimtis 2 -- 4 puslapiai.
+
+% \section{Medžiagos darbo tema dėstymo skyriai}
+% Medžiagos darbo tema dėstymo skyriuose išsamiai pateikiamos nagrinėjamos temos
+% detalės: pradiniai duomenys, jų analizės ir apdorojimo metodai, sprendimų
+% įgyvendinimas, gautų rezultatų apibendrinimas.
+
+% Medžiaga turi būti dėstoma aiškiai, pateikiant argumentus. Tekste dėstomas
+% trečiuoju asmeniu, t.y. rašoma ne „aš manau“, bet „autorius mano“, „autoriaus
+% nuomone“. Reikėtų vengti informacijos nesuteikiančių frazių, pvz., „...kaip jau
+% buvo minėta...“, „...kaip visiems žinoma...“ ir pan., vengti grožinės
+% literatūros ar publicistinio stiliaus, gausių metaforų ar panašių meninės
+% išraiškos priemonių.
+
+% Skyriai gali turėti poskyrius ir smulkesnes sudėtines dalis, kaip punktus ir
+% papunkčius.
+
+% \subsection{Poskyris}
+% Citavimo pavyzdžiai: cituojamas vienas šaltinis \cite{PvzStraipsnLt}; cituojami
+% keli šaltiniai \cite{PvzStraipsnEn, PvzKonfLt, PvzKonfEn, PvzKnygLt, PvzKnygEn,
+% PvzElPubLt, PvzElPubEn, PvzMagistrLt, PvzPhdEn}.
+
+% \subsubsection{Skirsnis}
+% \subsubsubsection{Straipsnis}
+% \subsubsection{Skirsnis}
+% \section{Skyrius}
+% \subsection{Poskyris}
+% \subsection{Poskyris}
+
+% \sectionnonum{Rezultatai ir išvados}
+% Rezultatų ir išvadų dalyje išdėstomi pagrindiniai darbo rezultatai (kažkas
+% išanalizuota, kažkas sukurta, kažkas įdiegta), toliau pateikiamos išvados
+% (daromi nagrinėtų problemų sprendimo metodų palyginimai, siūlomos
+% rekomendacijos, akcentuojamos naujovės). Rezultatai ir išvados pateikiami
+% sunumeruotų (gali būti hierarchiniai) sąrašų pavidalu. Darbo rezultatai turi
+% atitikti darbo tikslą.
 
 \printbibliography[heading=bibintoc]  % Šaltinių sąraše nurodoma panaudota
 % literatūra, kitokie šaltiniai. Abėcėlės tvarka išdėstomi darbe panaudotų
@@ -109,39 +151,9 @@ atitikti darbo tikslą.
 % Jei tokių nuorodų reikia, pateikti jas tekste.
 
 % \sectionnonum{Sąvokų apibrėžimai}
-\sectionnonum{Santrumpos}
-Sąvokų apibrėžimai ir santrumpų sąrašas sudaromas tada, kai darbo tekste
-vartojami specialūs paaiškinimo reikalaujantys terminai ir rečiau sutinkamos
-santrumpos.
-
-\appendix  % Priedai
-% Prieduose gali būti pateikiama pagalbinė, ypač darbo autoriaus savarankiškai
-% parengta, medžiaga. Savarankiški priedai gali būti pateikiami ir
-% kompaktiniame diske. Priedai taip pat numeruojami ir vadinami. Darbo tekstas
-% su priedais susiejamas nuorodomis.
-
-\section{Neuroninio tinklo struktūra}
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.5]{img/MLP}
-    \caption{Paveikslėlio pavyzdys}
-    \label{img:mlp}
-\end{figure}
-
-
-\section{Eksperimentinio palyginimo rezultatai}
-% tablesgenerator.com - converts calculators (e.g. excel) tables to LaTeX
-\begin{table}[H]\footnotesize
-  \centering
-  \caption{Lentelės pavyzdys}
-  {\begin{tabular}{|l|c|c|} \hline
-    Algoritmas & $\bar{x}$ & $\sigma^{2}$ \\
-    \hline
-    Algoritmas A  & 1.6335    & 0.5584       \\
-    Algoritmas B  & 1.7395    & 0.5647       \\
-    \hline
-  \end{tabular}}
-  \label{tab:table example}
-\end{table}
+% \sectionnonum{Santrumpos}
+% Sąvokų apibrėžimai ir santrumpų sąrašas sudaromas tada, kai darbo tekste
+% vartojami specialūs paaiškinimo reikalaujantys terminai ir rečiau sutinkamos
+% santrumpos.
 
 \end{document}
