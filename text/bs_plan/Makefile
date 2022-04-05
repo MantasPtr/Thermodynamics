@@ -25,7 +25,7 @@ ubuntu:
 
 
 text:
-	pdftotext bakalaurinis.pdf tekstas.txt
+	pdftotext -l 3 bakalaurinis.pdf tekstas.txt
 
 clean:
 	git clean -dfx

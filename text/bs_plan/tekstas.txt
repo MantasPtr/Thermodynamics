@@ -1,0 +1,62 @@
+VILNIAUS UNIVERSITETAS
+MATEMATIKOS IR INFORMATIKOS FAKULTETAS
+PROGRAMŲ SISTEMŲ BAKALAURO STUDIJŲ PROGRAMA
+
+Šilumos laidumo uždavinio lygiagretinimo tyrimas
+naudojant centrinius ir grafinius procesorius
+Steady-state heat equasion parallization analysis on CPU and
+GPU
+Bakalauro baigiamojo darbo planas
+
+Atliko:
+
+Mantas Petrikas
+
+(parašas)
+
+Darbo vadovas:
+
+dr. Rokas Astrauskas
+
+(parašas)
+
+Vilnius – 2022
+
+Darbo planas
+Bakalauriniame darbe bus tiriamos šilumos lygties paralelizavimo galimybes naudojant centrinius(ang. CPU) ir grafinių procesorius (ang. GPU). Šilumos uždavinys yra vienas iš Laplaso
+lygties pritaikymo galimybių. Šios antros eilės dalinės diferencialinės lygtys plačiai naudojamos
+fizikoje, sprendžiant elektrostatikos [Hou08], gravitacijos, magnetizmo [Bla96], pastovios būsenos
+temperatūrų [BE01] ir hidrodinamikos [Kad85] problemas.
+
+Darbo tikslas ir uždaviniai
+Darbo tikslas - įvertinti ir palyginti šilumos laidumo uždavinio lygiagretinimo algoritmo efektyvumą naudojant centrinius ir grafinius procesorius.
+Uždaviniai:
+• implementuoti ir įvertinti šilumos laidumo uždavinio algoritmo pagreitėjimą naudojant centrinius procesorius
+• suprojektuoti ir įgyvendinti šilumos laidumo uždavinio sprendimo algorimtą, naudojantį
+grafinių procesorių resursus
+• įvertinti grafinius procesorius naudojančio algoritmo našumą ir praktiškumą palyginant su
+centrinius procesorius naudojančiu algoritmu
+• palyginti gautus rezultatus rezultatus su kitais panašiais problemas nagrinėjančių mokslinių
+darbų rezultatais
+
+Darbo eiga
+Darbo teorinėje dalyje bus apžvelgiamas šilumos laidumo uždavinys, jo pritaikymo ir praplėtimo galimybes. Darbe bus nagrinėjami CPU ir GPU architektūriniai skirtumai, siekiant apžvelgti ir įvertinti technologijų pritaikomumą, privalumus ir trukūmus
+spendžiant šilumos pasiskirtymo patovios busenos (ang. steady-state heat distribution) uždavinį.
+Darbo metu bus nagrinėjamas ir įgyvendimas šilumos lygties sprendimas apribotoje dvimatinėjė
+erdvėje, kurioje kraštų temperatūros yra žinomos ir nekintančios. Darbe bus apžvelgiami vertimo kriterijai, kurias galima įvertinti ir palyginti algoritmo našumą, praktines taikymo galimybes ir
+kaštus. Bus įvedami kriterijai reikalinti palyginti algoritmo našumą naudojant centinius ir grafinius
+procesorius. Taip pat bus apžvelgiamas vienodos atminties prieigos (ang. UMA - uniform memory access) [RF13] [BIM+ 01] ir nevienodos atminties prieiga (ang. NUMA - non uniform memory
+access) [Lam13] programų architetūra, įvertinant jų trūkumus ir privalumus.
+1
+
+Darbo praktinėjė dalyje bus įgyvendimas nuoseklus algoritmas naudojant 1 centrinį procesorių, įvertinamas algoritmo našumas. Taip pat bus įgyvendimas paralelizuotas šilumos lygties
+spendimo algoritmas, įvertimas algortimo teorinis ir praktinis pagreitėjimas keičiant programos
+parametrus ir procesorių skaičių. Apžvelgiami lygiagretino technologijos ir algortimo pakeitimai
+reikalingi paleisti algoritmą naudojant grafinius procesorius. Įgyvendimas lygiagretus algoritmas
+naudojant 1 grafinį procesorių. Įvertimas algoritmo pagreitėjimas, keičiant algoritmo parametrus.
+Palyginimas algorimto veikimas naudojant centrinis ir grafinius procesius. Apžvelgiamos lygiagretinimo algoritmo galimybės naudojant kelis grafinius procesorius, su galimybę įgyvendinti ir ištirti
+algoritmo našumą naudojant kelis grafinius procesorius.
+
+2
+
+
