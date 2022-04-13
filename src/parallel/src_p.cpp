@@ -213,6 +213,7 @@ public:
     int send_blocksize;
     MPI_Status com_status;
     int block_row_count;
+    MPI_Request *all_requests;
     MPI_Request request_send_before;
     MPI_Request request_send_after;
     MPI_Request request_recv_before;
@@ -238,6 +239,7 @@ public:
 
         current_matrix = new double[send_blocksize];
         temp_matrix = new double[send_blocksize];
+        all_requests = new MPI_Request[4];
 
         communication_size = matrix_config.dimention - 2; // SKIP 2 as they are border values
         proc_id_before = proc_config.proc_id - 1;
@@ -315,20 +317,28 @@ public:
 
     void wait_for_communication()
     {
+        int all_request_counter = 0;
         if (proc_id_after < proc_config.proc_count)
         {
-            printf("core %d waiting send after core \n", proc_config.proc_id);
-            MPI_Wait(&request_send_after, MPI_STATUS_IGNORE);
-            printf("core %d waiting recv after core \n", proc_config.proc_id);
-            MPI_Wait(&request_recv_after, MPI_STATUS_IGNORE);
+            // printf("core %d waiting send after core \n", proc_config.proc_id);
+            // MPI_Wait(&request_send_after, MPI_STATUS_IGNORE);
+            // printf("core %d waiting recv after core \n", proc_config.proc_id);
+            // MPI_Wait(&request_recv_after, MPI_STATUS_IGNORE);
+            all_requests[all_request_counter] = request_send_after;
+            all_requests[all_request_counter + 1] = request_recv_after;
+            all_request_counter += 2;
         }
         if (proc_id_before >= 0)
         {
 
-            printf("core %d waiting recv before\n", proc_config.proc_id);
-            MPI_Wait(&request_recv_before, MPI_STATUS_IGNORE);
-            printf("core %d waiting send before\n", proc_config.proc_id);
-            MPI_Wait(&request_send_before, MPI_STATUS_IGNORE);
+            // printf("core %d waiting recv before\n", proc_config.proc_id);
+            // MPI_Wait(&request_recv_before, MPI_STATUS_IGNORE);
+            // printf("core %d waiting send before\n", proc_config.proc_id);
+            // MPI_Wait(&request_send_before, MPI_STATUS_IGNORE);
+
+            all_requests[all_request_counter] = request_recv_before;
+            all_requests[all_request_counter + 1] = request_send_before;
+            all_request_counter += 2;
         }
     }
 
