@@ -245,7 +245,7 @@ public:
         proc_id_before = proc_config.proc_id - 1;
         proc_id_after = proc_config.proc_id + 1;
         first_row_offset = 1;                                                   // SKIP 1 as it is a border value
-        last_row_offset = (matrix_config.dimention * (work_row_count - 1) + 1); // SKIPPING TO LAST ROW + SKIP 1 as it is a border value
+        last_row_offset = (matrix_config.dimention * (work_row_count + 1) + 1); // SKIPPING TO LAST ROW + SKIP 1 as it is a border value
     };
 
     double *get_intial_matrix()
@@ -261,27 +261,31 @@ public:
         {
             // TODO: Double check this
             printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before);
+            printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, send_blocksize);
+            printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + communication_size]);
             MPI_Isend(
-                current_matrix + first_row_offset, // SKIP 1 as it is a border value
+                temp_matrix + first_row_offset, // SKIP 1 as it is a border value
                 communication_size,
                 MPI_DOUBLE,
                 proc_id_before,
                 mpi_com_tag,
                 MPI_COMM_WORLD,
-                &request_send_after);
+                &request_send_before);
         }
         if (proc_id_after < proc_config.proc_count)
         {
             // TODO: Double check this
-            printf("core %d sending after %d \n", proc_config.proc_id, proc_id_before);
+            printf("core %d sending after %d \n", proc_config.proc_id, proc_id_after);
+            printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, send_blocksize);
+            printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + last_row_offset, temp_matrix[last_row_offset + communication_size]);
             MPI_Isend(
-                current_matrix + last_row_offset,
+                temp_matrix + last_row_offset,
                 communication_size,
                 MPI_DOUBLE,
                 proc_id_after,
                 mpi_com_tag,
                 MPI_COMM_WORLD,
-                &request_send_before);
+                &request_send_after);
         }
     };
 
@@ -291,6 +295,8 @@ public:
         {
             // TODO: Double check this
             printf("core %d receiving after %d \n", proc_config.proc_id, proc_id_after);
+            printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, send_blocksize);
+            printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + first_row_offset, current_matrix[first_row_offset + communication_size]);
             MPI_Irecv(
                 current_matrix + first_row_offset,
                 communication_size,
@@ -298,12 +304,14 @@ public:
                 proc_id_after,
                 mpi_com_tag,
                 MPI_COMM_WORLD,
-                &request_recv_before);
+                &request_recv_after);
         }
         if (proc_id_before >= 0)
         {
             // TODO: Double check this
             printf("core %d receiving before %d \n", proc_config.proc_id, proc_id_before);
+            printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, send_blocksize);
+            printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + last_row_offset, current_matrix[last_row_offset + communication_size]);
             MPI_Irecv(
                 current_matrix + last_row_offset,
                 communication_size,
@@ -311,7 +319,7 @@ public:
                 proc_id_before,
                 mpi_com_tag,
                 MPI_COMM_WORLD,
-                &request_recv_after);
+                &request_recv_before);
         }
     };
 
@@ -340,6 +348,8 @@ public:
             all_requests[all_request_counter + 1] = request_send_before;
             all_request_counter += 2;
         }
+        printf("all_request_counter %d pointers %p %p %p %p\n", all_request_counter, all_requests[0], all_requests[1], all_requests[2], all_requests[3]);
+        MPI_Waitall(all_request_counter, all_requests, MPI_STATUSES_IGNORE);
     }
 
     void get_all(double **full_matrix)
@@ -388,8 +398,12 @@ public:
 
     void do_termodynamics()
     {
+        printf("* Thermodynamics\n");
         termodynamics(current_matrix, block_row_count, matrix_config.dimention, &temp_matrix);
-        swap(current_matrix, temp_matrix);
+        printf("* Copying to antoher matrix\n");
+        copy(temp_matrix, temp_matrix + send_blocksize, current_matrix);
+        printf("* Communication\n");
+        communicate();
     }
 
     void communicate()
@@ -401,6 +415,14 @@ public:
         printf("= waiting\n");
         wait_for_communication();
     };
+
+    void cleanup()
+    {
+        printf("cleaning up\n");
+        delete current_matrix;
+        delete temp_matrix;
+        delete all_requests;
+    }
 };
 
 int main(int argc, char *argv[])
@@ -531,19 +553,23 @@ int main(int argc, char *argv[])
             }
         }
         printf("starting looping core %d\n", proc_config.proc_id);
-        for (int i = 1; i < MAX_ITERATION_COUNT; i++)
+        for (int i = 0; i < MAX_ITERATION_COUNT; i++)
         {
             if (debug_time)
             {
                 t1 = getTime();
             }
-            rowCommunicator.communicate();
+            printf(" iteration %d, core %d\n", i, proc_config.proc_id);
+
+            rowCommunicator.do_termodynamics();
             if (debug_time)
             {
                 t2 = getTime();
                 printf("%d iteration %d core - time to calculate: %.3f s\n", i, proc_config.proc_id, t2 - t1);
             }
         }
+        printf("finished looping core %d\n", proc_config.proc_id);
+        rowCommunicator.cleanup();
     }
     MPI_Finalize();
 }
