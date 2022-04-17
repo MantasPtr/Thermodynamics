@@ -1,3 +1,6 @@
+#ifndef __CONFIG_READER_INCLUDED__
+#define __CONFIG_READER_INCLUDED__
+
 #include <iostream>
 #include <tuple>
 
@@ -37,3 +40,5 @@ struct Configuration
 };
 
 Configuration read_config(string filename);
+
+#endif // __CONFIG_READER_INCLUDED__

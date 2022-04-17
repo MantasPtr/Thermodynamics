@@ -29,7 +29,7 @@ test_4: cleanup
 
 
 compile:
-	mpic++ src_p.cpp ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/config_reader.cpp ../common/time_utils.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c -o program.sh -std=c++17
+	mpic++ src_p.cpp ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/config_reader.cpp ../common/time_utils.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c ./full_comunicator.cpp -o program.sh -std=c++17
 
 run:
 	mpirun ./program.sh ../common/config.ini
