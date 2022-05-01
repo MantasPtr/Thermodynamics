@@ -56,7 +56,7 @@ public:
     int last_row_offset;
     int first_row_offset;
     int work_row_count;
-    int send_blocksize;
+    int total_blocksize;
     MPI_Status com_status;
     int block_row_count;
     MPI_Request *all_requests;
@@ -75,16 +75,16 @@ public:
     {
         work_row_count = (arg_matrix_config.dimention - 2) / arg_proc_config.proc_count; // -2 is for first and last row - they are constants, so no computation
         block_row_count = work_row_count + 2;                                            // +2 is padding (extra line on top and bellow), used in computation, but not modified
-        send_blocksize = block_row_count * arg_matrix_config.dimention;
+        total_blocksize = block_row_count * arg_matrix_config.dimention;
         // row split
         matrix_coordinates.column_start = (arg_matrix_config.dimention - 2) / proc_config.proc_count * proc_config.proc_id;
         matrix_coordinates.column_end = matrix_coordinates.column_start + block_row_count - 1; // -1 - since 0 based
         matrix_coordinates.row_start = 0;
         matrix_coordinates.row_end = arg_matrix_config.dimention;
-        printf("process %d matrix coordinates: %d %d %d %d\n", proc_config.proc_id, matrix_coordinates.column_start, matrix_coordinates.column_end, matrix_coordinates.row_start, matrix_coordinates.row_end);
+        // printf("process %d matrix coordinates: %d %d %d %d\n", proc_config.proc_id, matrix_coordinates.column_start, matrix_coordinates.column_end, matrix_coordinates.row_start, matrix_coordinates.row_end);
 
-        current_matrix = new double[send_blocksize];
-        temp_matrix = new double[send_blocksize];
+        current_matrix = new double[total_blocksize];
+        temp_matrix = new double[total_blocksize];
         all_requests = new MPI_Request[4];
 
         communication_size = matrix_config.dimention - 2; // SKIP 2 as they are border values
@@ -96,21 +96,19 @@ public:
 
     double *get_intial_matrix()
     {
-        printf("Generating matrix for proc %d\n", proc_config.proc_id);
+        // printf("Generating matrix for proc %d\n", proc_config.proc_id);
         return generate_part_of_the_matrix(matrix_config.dimention, matrix_config.max_value, matrix_coordinates.row_start, matrix_coordinates.row_end, matrix_coordinates.column_start, matrix_coordinates.column_end);
     }
 
     void send()
     {
-        printf("sizes: %d %d %f \n", send_blocksize, communication_size, current_matrix[communication_size]);
         if (proc_id_before >= 0)
         {
-            // TODO: Double check this
-            printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before);
-            printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, send_blocksize);
-            printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + communication_size]);
+            // printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before);
+            // printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize);
+            // printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + communication_size]);
             MPI_Isend(
-                temp_matrix + first_row_offset, // SKIP 1 as it is a border value
+                temp_matrix + first_row_offset + matrix_config.dimention, // SKIP 1 as it is a border value
                 communication_size,
                 MPI_DOUBLE,
                 proc_id_before,
@@ -120,12 +118,11 @@ public:
         }
         if (proc_id_after < proc_config.proc_count)
         {
-            // TODO: Double check this
-            printf("core %d sending after %d \n", proc_config.proc_id, proc_id_after);
-            printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, send_blocksize);
-            printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + last_row_offset, temp_matrix[last_row_offset + communication_size]);
+            // printf("core %d sending after %d \n", proc_config.proc_id, proc_id_after);
+            // printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, total_blocksize);
+            // printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + last_row_offset, temp_matrix[last_row_offset + communication_size]);
             MPI_Isend(
-                temp_matrix + last_row_offset,
+                temp_matrix + last_row_offset - matrix_config.dimention,
                 communication_size,
                 MPI_DOUBLE,
                 proc_id_after,
@@ -139,10 +136,9 @@ public:
     {
         if (proc_id_after < proc_config.proc_count)
         {
-            // TODO: Double check this
-            printf("core %d receiving after %d \n", proc_config.proc_id, proc_id_after);
-            printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, send_blocksize);
-            printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + first_row_offset, current_matrix[first_row_offset + communication_size]);
+            // printf("core %d receiving after %d \n", proc_config.proc_id, proc_id_after);
+            // printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize);
+            // printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + first_row_offset, current_matrix[first_row_offset + communication_size]);
             MPI_Irecv(
                 current_matrix + first_row_offset,
                 communication_size,
@@ -154,10 +150,9 @@ public:
         }
         if (proc_id_before >= 0)
         {
-            // TODO: Double check this
-            printf("core %d receiving before %d \n", proc_config.proc_id, proc_id_before);
-            printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, send_blocksize);
-            printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + last_row_offset, current_matrix[last_row_offset + communication_size]);
+            // printf("core %d receiving before %d \n", proc_config.proc_id, proc_id_before);
+            // printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, total_blocksize);
+            // printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + last_row_offset, current_matrix[last_row_offset + communication_size]);
             MPI_Irecv(
                 current_matrix + last_row_offset,
                 communication_size,
@@ -174,27 +169,17 @@ public:
         int all_request_counter = 0;
         if (proc_id_after < proc_config.proc_count)
         {
-            // printf("core %d waiting send after core \n", proc_config.proc_id);
-            // MPI_Wait(&request_send_after, MPI_STATUS_IGNORE);
-            // printf("core %d waiting recv after core \n", proc_config.proc_id);
-            // MPI_Wait(&request_recv_after, MPI_STATUS_IGNORE);
             all_requests[all_request_counter] = request_send_after;
             all_requests[all_request_counter + 1] = request_recv_after;
             all_request_counter += 2;
         }
         if (proc_id_before >= 0)
         {
-
-            // printf("core %d waiting recv before\n", proc_config.proc_id);
-            // MPI_Wait(&request_recv_before, MPI_STATUS_IGNORE);
-            // printf("core %d waiting send before\n", proc_config.proc_id);
-            // MPI_Wait(&request_send_before, MPI_STATUS_IGNORE);
-
             all_requests[all_request_counter] = request_recv_before;
             all_requests[all_request_counter + 1] = request_send_before;
             all_request_counter += 2;
         }
-        printf("all_request_counter %d pointers %p %p %p %p\n", all_request_counter, all_requests[0], all_requests[1], all_requests[2], all_requests[3]);
+        // printf("WAITING - proc %d - all_request_counter %d pointers %p %p %p %p\n", proc_config.proc_id, all_request_counter, all_requests[0], all_requests[1], all_requests[2], all_requests[3]);
         MPI_Waitall(all_request_counter, all_requests, MPI_STATUSES_IGNORE);
     }
 
@@ -204,15 +189,15 @@ public:
         {
             // processor 0 did everything locally, so just coping directly to
             // skip row 1
-            copy(current_matrix, current_matrix + send_blocksize, *full_matrix);
+            copy(current_matrix + matrix_config.dimention, current_matrix + total_blocksize, *full_matrix + matrix_config.dimention);
             // for others do sending
             for (int proc_id = 1; proc_id < proc_config.proc_count; proc_id++)
             {
-
+                // printf("ALL DATA - recv - proc 0 waiting for proc_id %d \n", proc_id);
                 int offset = (proc_id * work_row_count) * matrix_config.dimention;
                 MPI_Recv(
-                    full_matrix + offset,
-                    send_blocksize,
+                    *full_matrix + offset + matrix_config.dimention,
+                    total_blocksize,
                     MPI_DOUBLE,
                     proc_id,
                     0,
@@ -229,42 +214,35 @@ public:
         {
             if (debug_config.communication_info)
             {
-                printf("Sending data back to master process from %d (total of %d)\n", proc_config.proc_id, send_blocksize);
+                // printf("Sending data back to master process from %d (total of %d)\n", proc_config.proc_id, total_blocksize);
             }
+            // printf("ALL DATA - send  - proc_id %d sending to 0 \n", proc_config.proc_id);
             MPI_Send(
-                current_matrix, // skip first line since its all the same
-                send_blocksize,
+                current_matrix + matrix_config.dimention, // skip 1 row
+                total_blocksize,
                 MPI_DOUBLE,
                 0,
                 0,
                 MPI_COMM_WORLD);
         }
-        // TODO - make async
     }
 
     void do_termodynamics()
     {
-        printf("* Thermodynamics\n");
         termodynamics(current_matrix, block_row_count, matrix_config.dimention, &temp_matrix);
-        printf("* Copying to antoher matrix\n");
-        copy(temp_matrix, temp_matrix + send_blocksize, current_matrix);
-        printf("* Communication\n");
+        copy(temp_matrix, temp_matrix + total_blocksize, current_matrix);
         communicate();
     }
 
     void communicate()
     {
-        printf("= receiving\n");
         receive();
-        printf("= sending\n");
         send();
-        printf("= waiting\n");
         wait_for_communication();
     };
 
     void cleanup()
     {
-        printf("cleaning up\n");
         delete current_matrix;
         delete temp_matrix;
         delete all_requests;
@@ -398,8 +376,16 @@ int main(int argc, char *argv[])
                 save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
             }
         }
+        if (DRAW_FREQUENCY > 0)
+        {
+            rowCommunicator.get_all(&matrix);
+            if (proc_config.proc_id == 0)
+            {
+                save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, 0, USE_ABS_SCALE);
+            }
+        }
         printf("starting looping core %d\n", proc_config.proc_id);
-        for (int i = 0; i < MAX_ITERATION_COUNT; i++)
+        for (int i = 1; i < MAX_ITERATION_COUNT; i++)
         {
             if (debug_time)
             {
@@ -413,8 +399,21 @@ int main(int argc, char *argv[])
                 t2 = getTime();
                 printf("%d iteration %d core - time to calculate: %.3f s\n", i, proc_config.proc_id, t2 - t1);
             }
+            if (DRAW_FREQUENCY > 0 && i % DRAW_FREQUENCY == 0)
+            {
+                rowCommunicator.get_all(&matrix);
+                if (proc_config.proc_id == 0)
+                {
+                    save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
+                }
+            }
         }
         printf("finished looping core %d\n", proc_config.proc_id);
+        if (proc_config.proc_id == 0)
+        {
+            double end_time = getTime();
+            printf("Total execution time: %.3f\n", end_time - start_time);
+        }
         rowCommunicator.cleanup();
     }
     MPI_Finalize();

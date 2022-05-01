@@ -77,8 +77,8 @@ char *generate_filename(char const *filename_postfix)
 
 void save_to_file(double *matrix, int matrix_dimention, double max_value, int index, bool use_abs_value)
 {
-    char index_str[6];
-    snprintf(index_str, 6, "%05d", index);
+    char index_str[8];
+    snprintf(index_str, 8, "%07d", index);
     char *filename = generate_filename(index_str);
     // printf("Saved image to file %s\n", filename);
     write_matrix_to_file(matrix, matrix_dimention, matrix_dimention, filename, use_abs_value);

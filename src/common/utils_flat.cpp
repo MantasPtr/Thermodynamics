@@ -1,5 +1,9 @@
 #include "utils_flat.h"
 #include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265
+
 int sqr(int x)
 {
     return x * x;
@@ -7,6 +11,7 @@ int sqr(int x)
 
 double *empty_partial_matrix(int dim_x, int dim_y)
 {
+    // printf("EMPTY PARTIAL MATRIX = %d %d\n", dim_x, dim_y);
     // Innitiate
     double *matrix = new double[dim_x * dim_y];
     // Clean matrix
@@ -35,7 +40,20 @@ double *generate_matrix(int matrix_dimention, double max_value)
 
 double *generate_part_of_the_matrix(int matrix_dimention, double max_value, int row_start, int row_end, int column_start, int column_end)
 {
+    // printf("EMPTY MATRIX = %d %d %d %d %d\n", matrix_dimention, row_end, row_start, column_end, column_start);
     double *matrix = empty_partial_matrix(row_end - row_start, column_end - column_start);
+    int NUMBER_OF_WAVES = 5;
+
+    for (int i = 0; i < matrix_dimention; i++)
+    {
+        double value = (sin((double)i / matrix_dimention * 2 * PI * NUMBER_OF_WAVES) + 1) * 0.5 * max_value;
+        if (column_start == 0)
+            matrix[i] = value;
+        if (matrix_dimention == column_end)
+            matrix[matrix_dimention * (matrix_dimention - 1) + i] = value;
+    }
+
+    //
 
     // // fill sequence
     // for (int i = 0; i < matrix_dimention; i++)
@@ -48,20 +66,21 @@ double *generate_part_of_the_matrix(int matrix_dimention, double max_value, int 
 
     // fill donut
 
-    int center_x = (int)(matrix_dimention / 2);
-    int center_y = (int)(matrix_dimention / 2);
-    int radius1 = (int)((center_x + matrix_dimention) / 5);
-    int radius2 = (int)((center_x + matrix_dimention) / 6);
+    // int center_x = (int)(matrix_dimention / 2);
+    // int center_y = (int)(matrix_dimention / 2);
+    // int radius1 = (int)((center_x + matrix_dimention) / 5);
+    // int radius2 = (int)((center_x + matrix_dimention) / 6);
 
-    for (int i = column_start; i < column_end; i++)
-    {
-        for (int j = row_start; j < row_end; j++)
-        {
-            bool is_inside_outer = sqr(i - center_x) + sqr(j - center_y) <= sqr(radius1);
-            bool is_inside_inner = sqr(i - center_x) + sqr(j - center_y) <= sqr(radius2);
-            matrix[i * matrix_dimention + j] = is_inside_outer && !is_inside_inner ? max_value : 0.0;
-        }
-    }
+    // for (int i = column_start; i < column_end; i++)
+    // {
+    //     for (int j = row_start; j < row_end; j++)
+    //     {
+    //         bool is_inside_outer = sqr(i - center_x) + sqr(j - center_y) <= sqr(radius1);
+    //         bool is_inside_inner = sqr(i - center_x) + sqr(j - center_y) <= sqr(radius2);
+    //         matrix[i * matrix_dimention + j] = is_inside_outer && !is_inside_inner ? max_value : 0.0;
+    //     }
+    // }
+
     // fill corner
 
     // int center = (int)(matrix_dimention / 2);
