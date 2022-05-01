@@ -11,7 +11,7 @@ int sqr(int x)
 
 double *empty_partial_matrix(int dim_x, int dim_y)
 {
-    // printf("EMPTY PARTIAL MATRIX = %d %d\n", dim_x, dim_y);
+    printf("EMPTY PARTIAL MATRIX = %d %d\n", dim_x, dim_y);
     // Innitiate
     double *matrix = new double[dim_x * dim_y];
     // Clean matrix
@@ -40,8 +40,9 @@ double *generate_matrix(int matrix_dimention, double max_value)
 
 double *generate_part_of_the_matrix(int matrix_dimention, double max_value, int row_start, int row_end, int column_start, int column_end)
 {
-    // printf("EMPTY MATRIX = %d %d %d %d %d\n", matrix_dimention, row_end, row_start, column_end, column_start);
+    printf("EMPTY MATRIX = %d %d %d %d %d\n", matrix_dimention, row_end, row_start, column_end, column_start);
     double *matrix = empty_partial_matrix(row_end - row_start, column_end - column_start);
+    printf("FILLING WAVES");
     int NUMBER_OF_WAVES = 5;
 
     for (int i = 0; i < matrix_dimention; i++)
