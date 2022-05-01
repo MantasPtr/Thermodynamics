@@ -1,0 +1,175 @@
+\documentclass{VUMIFPSbakalaurinis}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{subfig}
+\usepackage{wrapfig}
+
+% Titulinio aprašas
+\university{Vilniaus universitetas}
+\faculty{Matematikos ir informatikos fakultetas}
+\department{Programų sistemų bakalauro studijų programa}
+\papertype{Kursinis darbas}
+
+\title{Šilumos laidumo uždavinio lygiagretinimas MIF klasteryje}
+\titleineng{Parallelization of the steady-state heat problem on the MIF computing cluster}
+\author{Mantas Petrikas}
+\supervisor{dr. Rokas Astrauskas}
+\date{Vilnius – \the\year}
+
+% Nustatymai
+% \setmainfont{Palemonas}   % Pakeisti teksto šriftą į Palemonas (turi būti įdiegtas sistemoje)
+\bibliography{bibliografija}
+
+\begin{document}
+\maketitle
+
+
+
+\tableofcontents
+
+
+\sectionnonum{Įvadas}
+
+
+% Įvade apibūdinamas darbo tikslas, temos aktualumas ir siekiami rezultatai. Darbo įvadas neturi
+% būti dėstymo santrauka. Įvado apimtis 1–2 puslapiai.
+
+Šiame darbe bus tiriamos šilumos lygties paralelizavimo galimybes naudojant centrinius(ang. CPU) procesorius. 
+Šilumos uždavinys yra vienas iš Laplaso lygties pritaikymo galimybių. 
+Šios antros eilės dalinės diferencialinės lygtys plačiai naudojamos fizikoje, sprendžiant elektrostatikos \cite{house2008analytic}, gravitacijos, magnetizmo \cite{blakely1996potential}, pastovios būsenos temperatūrų \cite {berntsson2001numerical} ir hidrodinamikos \cite{kadanoff1985simulating} problemas. 
+Darbe narginėjami algoritmo palerizavimo teorinis ir praktinis pagreitėjimai pasitelkiant skirtingas duomenų padalimo branduoliams strategijas. 
+Visi praktiniai eksperimentai buvo vykdomi naudojant Matemematikos ir Informatikos fakulteto Skaitmeninių tyrimų ir skaičiavimų centro paskirstytų skaičiavimų tinklo resursus.
+
+\subsectionnonum{Darbo tikslas ir uždaviniai}
+
+% Darbo tikslas - įvertinti ir palyginti šilumos laidumo uždavinio lygiagretinimo algoritmo efektyvumą naudojant centrinius ir grafinius procesorius.
+
+% Uždaviniai:
+% \begin{itemize}
+%     \item implementuoti ir įvertinti šilumos laidumo uždavinio algoritmo pagreitėjimą naudojant centrinius procesorius
+%     \item suprojektuoti ir implementuoti šilumos laidumo uždavinio sprendimo algorimtą, naudojantį grafinių procesorių resursus
+%     \item įvertinti grafinius procesorius naudojančio algoritmo našumą ir praktiškumą lyginant su centrinius procesorius naudojančiu algoritmu
+%     \item palyginti gautus rezultatus rezultatus su kitais panašiais problemas nagrinėjančių mokslinių darbų rezultatais
+% \end{itemize}
+
+% \subsectionnonum{Laukiami rezultatai}
+% \begin{itemize}
+%     \item Šilumos laidumo uždavinio algoritmo implementacija naudojanti centrinius procesorius
+%     \item Šilumos laidumo uždavinio sprendimo implementacija naudojanti grafinius procesorius
+%     \item Algoritmų teorinių ir praktinių pagreitėjimų analyzė
+%     \item Grafinius ir centrinius procesorius naudojančių algoritmų pagreitėjimo palyginimas
+% \end{itemize}
+% \subsectionnonum{Darbo metodai}
+% \begin{itemize}
+%     \item Algoritmų veikimo laiko matavimas, keičiant jo parametrus MIF klasteriuose
+%     \item Algoritmų praktinių ir teorinių pagreitėjimų palyginomiji analyzė
+%     \item Susijusios literatūros analyzė
+% \end{itemize}
+
+% Šiame darbe nagrinėjama šilumos lygties uždavinio algoritmo paralelizavimo galimybės, naudojant MIF klasteryje esančius resursus. 
+% Šilumos lygties uždavinys šio darbo ribose apibrėžiamas kaip dvimačio objekto temperatūros
+
+
+Uždaviniai:
+\begin{itemize}
+    \item implementuoti nuoseklųjį šilumos laidumo uždavinio algoritmą
+    \item implementuoti lygiagretūjį šilumos laidumo uždavinio algoritmą pagreitėjimą naudojant centrinius procesorius
+    \item suprojektuoti ir implementuoti šilumos laidumo uždavinio sprendimo algorimtą, naudojantį grafinių procesorių resursus
+    \item įvertinti grafinius procesorius naudojančio algoritmo našumą ir praktiškumą lyginant su centrinius procesorius naudojančiu algoritmu
+    \item palyginti gautus rezultatus rezultatus su kitais panašiais problemas nagrinėjančių mokslinių darbų rezultatais
+\end{itemize}
+
+\section{Medžiagos darbo tema dėstymo skyriai}
+% Medžiagos darbo tema dėstymo skyriuose pateikiamos nagrinėjamos temos detalės: pradinė me-
+% džiaga, jos analizės ir apdorojimo metodai, sprendimų įgyvendinimas, gautų rezultatų apibendrinimas.
+% Šios dalies turinys labai priklauso nuo darbo temos. Kursiniame darbe analizuojama dalykinė sritis, jo
+% rezultate formuluojamas bakalauro darbe sprendžiamas uždavinys. Referatas neatitinka kursiniams
+% darbams keliamų reikalavimų. Dėstymo skyriai gali turėti poskyrius ir smulkesnes sudėtines dalis, kaip
+% punktus ir papunkčius
+
+% Medžiaga turi būti dėstoma aiškiai, pateikiant argumentus. Tekste dėstomas
+% trečiuoju asmeniu, t.y. rašoma ne „aš manau“, bet „autorius mano“, „autoriaus
+% nuomone“. Reikėtų vengti informacijos nesuteikiančių frazių, pvz., „...kaip jau
+% buvo minėta...“, „...kaip visiems žinoma...“ ir pan., vengti grožinės
+% literatūros ar publicistinio stiliaus, gausių metaforų ar panašių meninės
+% išraiškos priemonių.
+
+
+\sectionnonum{Rezultatai ir išvados}
+
+% \subsection{Poskyris}
+% Citavimo pavyzdžiai: cituojamas vienas šaltinis \cite{PvzStraipsnLt}; cituojami
+% keli šaltiniai \cite{PvzStraipsnEn, PvzKonfLt, PvzKonfEn, PvzKnygLt, PvzKnygEn,
+% PvzElPubLt, PvzElPubEn, PvzMagistrLt, PvzPhdEn}.
+
+% \subsubsection{Skirsnis}
+% \subsubsubsection{Straipsnis}
+% \subsubsection{Skirsnis}
+% \section{Skyrius}
+% \subsection{Poskyris}
+% \subsection{Poskyris}
+
+
+
+% kuriame pateikiami tyrimo objektas ir aktualumas, darbo tikslas, keliami už-
+% daviniai ir laukiami rezultatai, tyrimo metodai, numatomas darbo atlikimo procesas, apibūdi-
+% nami darbui aktualūs literatūros šaltiniai.
+% Pastaba. Darbo uždavinyje apibrėžiamas siekiamas rezultatas, kad būtų galimybė išmatuoti,
+% ar tikslai ir uždaviniai yra išspręsti, bei kokiu lygiu (vertinant kiekybę bei kokybę). Pavyz-
+% džiui, „Atlikti literatūros .... analizę“ nėra tinkamas uždavinys, nes nusako procesą, tačiau
+% neapibrėžia jo rezultato. Tinkamos uždavinio formuluotės šablonai: „Išanalizuoti literatūrą
+% ... siekiant apžvelgti ir įvertinti /... metodų tinkamumą sprendžiamam uždaviniui/privalu-
+% mus ir trūkumus sprendžiant ... uždavinį/rekomenduojamas ... projektavimo gaires, šablonus
+% ir pan.
+
+% \sectionnonum{Įvadas}
+% Įvade nurodomas darbo tikslas ir uždaviniai, kuriais bus įgyvendinamas tikslas,
+% aprašomas temos aktualumas, apibrėžiamas tiriamasis objektas akcentuojant
+% neapibrėžtumą, kuris bus išspręstas darbe, aptariamos teorinės darbo prielaidos
+% bei metodika, apibūdinami su tema susiję literatūros ar kitokie šaltiniai,
+% temos analizės tvarka, darbo atlikimo aplinkybės, pateikiama žinių apie
+% naudojamus instrumentus (programas ir kt., jei darbe yra eksperimentinė dalis).
+% Darbo įvadas neturi būti dėstymo santrauka. Įvado apimtis 2 -- 4 puslapiai.
+
+% \section{Medžiagos darbo tema dėstymo skyriai}
+% Medžiagos darbo tema dėstymo skyriuose išsamiai pateikiamos nagrinėjamos temos
+% detalės: pradiniai duomenys, jų analizės ir apdorojimo metodai, sprendimų
+% įgyvendinimas, gautų rezultatų apibendrinimas.
+
+
+% Skyriai gali turėti poskyrius ir smulkesnes sudėtines dalis, kaip punktus ir
+% papunkčius.
+
+
+
+
+% \sectionnonum{Rezultatai ir išvados}
+% Rezultatų ir išvadų dalyje turi būti aiškiai išdėstomi pagrindiniai darbo rezultatai (kažkas išana-
+% lizuota, kažkas sukurta, kažkas įdiegta) ir pateikiamos išvados (daromi nagrinėtų problemų sprendimo
+% metodų palyginimai, teikiamos rekomendacijos, akcentuojamos naujovės).
+
+\printbibliography[heading=bibintoc]  % Šaltinių sąraše nurodoma panaudota
+% literatūra, kitokie šaltiniai. Abėcėlės tvarka išdėstomi darbe panaudotų
+% (cituotų, perfrazuotų ar bent paminėtų) mokslo leidinių, kitokių publikacijų
+% bibliografiniai aprašai. Šaltinių sąrašas spausdinamas iš naujo puslapio.
+% Aprašai pateikiami netransliteruoti. Šaltinių sąraše negali būti tokių
+% šaltinių, kurie nebuvo paminėti tekste. Šaltinių sąraše rekomenduojame
+% necituoti savo kursinio darbo, nes tai nėra oficialus literatūros šaltinis.
+% Jei tokių nuorodų reikia, pateikti jas tekste.
+
+% \sectionnonum{Sąvokų apibrėžimai}
+% \sectionnonum{Santrumpos}
+% Sąvokų apibrėžimai ir santrumpų sąrašas sudaromas tada, kai darbo tekste
+% vartojami specialūs paaiškinimo reikalaujantys terminai ir rečiau sutinkamos
+% santrumpos.
+
+\end{document}
