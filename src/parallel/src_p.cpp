@@ -273,12 +273,15 @@ int main(int argc, char *argv[])
     bool debug_communication_info = config.debug.communication_info;
     bool debug_only_main_core = config.debug.only_main_core;
 
-    double *matrix = generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
+    double *matrix;
     ProcConfig proc_config;
     MPI_Status com_status;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &proc_config.proc_id);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_config.proc_count);
+
+    if (proc_config.proc_id == 0 && DRAW_FREQUENCY > 0)
+        generate_matrix(MATRIX_DIMENTION, MAX_MATRIX_VALUE);
 
     bool debug_time = (proc_config.proc_id == 0 || !debug_only_main_core) && config.debug.time_info;
     if (debug_time)

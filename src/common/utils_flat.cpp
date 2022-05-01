@@ -42,7 +42,7 @@ double *generate_part_of_the_matrix(int matrix_dimention, double max_value, int 
 {
     printf("EMPTY MATRIX = %d %d %d %d %d\n", matrix_dimention, row_end, row_start, column_end, column_start);
     double *matrix = empty_partial_matrix(row_end - row_start, column_end - column_start);
-    printf("FILLING WAVES");
+    printf("FILLING WAVES\n");
     int NUMBER_OF_WAVES = 5;
 
     for (int i = 0; i < matrix_dimention; i++)
