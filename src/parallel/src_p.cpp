@@ -109,7 +109,7 @@ public:
         {
             if_debug_com(printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before));
             if_debug_com(printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize));
-            if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + communication_size]));
+            if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + matrix_config.dimention + communication_size]));
             MPI_Isend(
                 temp_matrix + first_row_offset + matrix_config.dimention, // SKIP 1 row as it has the a border values
                 communication_size,
