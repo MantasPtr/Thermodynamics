@@ -18,7 +18,7 @@ double *empty_partial_matrix(int dim_x, int dim_y)
     for (int i = 0; i < dim_x; i++)
     {
         for (int j = 0; j < dim_y; j++)
-            matrix[i * dim_x + j] = 0.0;
+            matrix[i * dim_y + j] = 0.0;
     }
     return matrix;
 }
