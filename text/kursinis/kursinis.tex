@@ -47,9 +47,7 @@
 Šilumos uždavinys yra vienas iš Laplaso lygties pritaikymo galimybių. 
 Šios antros eilės dalinės diferencialinės lygtys plačiai naudojamos fizikoje, sprendžiant elektrostatikos \cite{house2008analytic}, gravitacijos, magnetizmo \cite{blakely1996potential}, pastovios būsenos temperatūrų \cite {berntsson2001numerical} ir hidrodinamikos \cite{kadanoff1985simulating} problemas. 
 Darbe narginėjami algoritmo palerizavimo teorinis ir praktinis pagreitėjimai pasitelkiant skirtingas duomenų padalimo branduoliams strategijas. 
-Visi praktiniai eksperimentai buvo vykdomi naudojant Matemematikos ir Informatikos fakulteto Skaitmeninių tyrimų ir skaičiavimų centro paskirstytų skaičiavimų tinklo resursus.
-
-\subsectionnonum{Darbo tikslas ir uždaviniai}
+Visi praktiniai eksperimentai buvo vykdomi naudojant Vilniaus Universiteto Matemematikos ir Informatikos fakulteto Skaitmeninių tyrimų ir skaičiavimų centro paskirstytų skaičiavimų tinklo resursus.
 
 % Darbo tikslas - įvertinti ir palyginti šilumos laidumo uždavinio lygiagretinimo algoritmo efektyvumą naudojant centrinius ir grafinius procesorius.
 
@@ -88,7 +86,38 @@ Uždaviniai:
     \item palyginti gautus rezultatus rezultatus su kitais panašiais problemas nagrinėjančių mokslinių darbų rezultatais
 \end{itemize}
 
-\section{Medžiagos darbo tema dėstymo skyriai}
+
+
+\section{Sprendžiamos problemos aprašymas}
+
+Šilumos laidumo lygtis.
+
+\subsection{Praktiniai abribojimai}
+
+Šio darbo kontekste, temperatūros pakitimai vyksta dvimatinėje kvadratinėje erdvėje, kurios šoniniai taškai turi pastovią temperatūros vertę, kuri nekinta laikui bėgant.
+Kiekvienoje iteracijoje ne kraštinio taško temperatūra apskaičiuojama kaip jį supančių 4 taškų praėjusios iteracijos temperatūrų vidurkis.
+
+\section{Programos implementacija}
+
+\subsection{Programos vykdymo aplinka}
+
+Siekiant išlaikytis vienodas sąlygas ir ištestuoti algorimtą turint didelį centinių procesorių kiekį, visi šiame darbe aprašyti praktiniai testai buvo vykdomi Vilniaus Universiteto Matemematikos ir Informatikos fakulteto Skaitmeninių tyrimų ir skaičiavimų centro paskirstytų skaičiavimų tinkle.
+Konkrečiai šio darbo rašymo metu buvo naudojamas „beta“ telkinys, kurį sudaro 56 (testavimo metu praktiškai buvo pasiekiami tik 42) mazgai turinys po 2 Intel Xeon X5650 procesius, kurių kiekvienas turi po 6 branduolius. 
+Kiekvienojame mazge yra 24 GB operatyviosios atminties (ang. RAM) ir jie turi prieeigą prie 20Gbit/s infiniband tinklo. 
+
+http://mif.vu.lt/cluster/
+
+\subsection{Nuoseklusis algoritmas}
+
+Nuoseklusis algoritmas įgyvendintas C++ kalba. 
+
+\subsection{Lygiagretūs algortimai}
+
+Lygiagrečiam sprendimui įgyvendinti buvo naudota C++ programavimo kalbos OpenMPI biblioteka.
+
+\subsection{Duomenų dalinimas eilutėmis}
+
+\subsection{Duomenų dalinimas kvadratais}
 % Medžiagos darbo tema dėstymo skyriuose pateikiamos nagrinėjamos temos detalės: pradinė me-
 % džiaga, jos analizės ir apdorojimo metodai, sprendimų įgyvendinimas, gautų rezultatų apibendrinimas.
 % Šios dalies turinys labai priklauso nuo darbo temos. Kursiniame darbe analizuojama dalykinė sritis, jo

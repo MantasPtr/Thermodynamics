@@ -13,6 +13,11 @@ submit:
 	cat status.txt
 	cat status.txt | awk '{print $$4}' > id.txt
 
+submit-seq:
+	sbatch thd-seq.sh > status.txt
+	cat status.txt
+	cat status.txt | awk '{print $$4}' > id.txt
+
 status:
 	squeue -j $$(cat id.txt)
 

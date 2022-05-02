@@ -93,8 +93,8 @@ public:
         communication_size = matrix_config.dimention - 2; // SKIP 2 as they are border values
         proc_id_before = proc_config.proc_id - 1;
         proc_id_after = proc_config.proc_id + 1;
-        first_row_offset = 1;                                                   // SKIP 1 as it is a border value
-        last_row_offset = (matrix_config.dimention * (work_row_count + 1) + 1); // SKIPPING TO LAST ROW + SKIP 1 as it is a border value
+        first_row_offset = 1;                                                 // SKIP 1 as it is a border value
+        last_row_offset = matrix_config.dimention * (work_row_count + 1) + 1; // SKIPPING TO LAST ROW + SKIP 1 as it is a border value
     };
 
     double *get_intial_matrix()

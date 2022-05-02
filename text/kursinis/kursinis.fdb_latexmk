@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1651438801 "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.tex" "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.pdf" "kursinis" 1651438801
+["pdflatex"] 1651524502 "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.tex" "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.pdf" "kursinis" 1651524502
   "/etc/texmf/web2c/texmf.cnf" 1623527432 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.aux" 1651438801 8 a94a2480d3289e625eea47cd1b285758 ""
-  "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.tex" 1651438801 9106 1a7b8e98e7f0f01a67f3430427243bc7 ""
+  "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.aux" 1651524502 8 a94a2480d3289e625eea47cd1b285758 ""
+  "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.tex" 1651524501 10581 8c82b985b33e0e0e384d67787c5e459f ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1136768653 1288 655e228510b4c2a1abe905c368440826 ""
   "/usr/share/texlive/texmf-dist/tex/generic/xkeyval/keyval.tex" 1403829539 2725 fc34ef3ccb37ba15a640e8fca6190bca ""
@@ -23,8 +23,8 @@
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1623527521 8277837 dbe52b41ad60b10aa10f5c1f88320eb3 ""
   "LTPlius.sty" 1650226688 5271 09b4edc5bcbae965bc0d90702773af0a ""
   "VUMIFPSbakalaurinis.cls" 1650226688 10888 f9591e3f95c1817d7766e79e7fb8dd63 ""
-  "kursinis.tex" 1651438801 9106 1a7b8e98e7f0f01a67f3430427243bc7 ""
+  "kursinis.tex" 1651524501 10581 8c82b985b33e0e0e384d67787c5e459f ""
   (generated)
-  "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.log"
   "kursinis.log"
+  "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.log"
   "/home/mape/Documents/Thermodynamics/text/kursinis/kursinis.pdf"
