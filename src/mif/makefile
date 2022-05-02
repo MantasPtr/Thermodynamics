@@ -24,3 +24,7 @@ status:
 output:
 	cat /scratch/lustre/home/mape3071/Thermodynamics/src/parallel/slurm-$$(cat id.txt).out
 
+
+output-seq:
+	cat /scratch/lustre/home/mape3071/Thermodynamics/src/sequential/slurm-$$(cat id.txt).out
+
