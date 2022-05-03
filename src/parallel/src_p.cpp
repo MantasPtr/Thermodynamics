@@ -391,7 +391,7 @@ int main(int argc, char *argv[])
             {
                 t1 = getTime();
             }
-            printf(" iteration %d, core %d\n", i, proc_config.proc_id);
+            // printf(" iteration %d, core %d\n", i, proc_config.proc_id);
 
             rowCommunicator.do_termodynamics();
             if (debug_time)
