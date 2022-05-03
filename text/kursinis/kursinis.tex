@@ -88,13 +88,16 @@ Uždaviniai:
 
 
 
-\section{Sprendžiamos problemos aprašymas}
+\section{Sprendžiamos problemos modelis}
 
-Šilumos laidumo lygtis.
+Šilumos laidumo lygtis. Vientisa kvadratinė metalinė plokštė, turinti pradinę temperatūra. 
+Metalinės plokšės kraštinėse esanti temperatūra. 
+Uždavinio tikslas - nustatyti galutinį temperatūros pasiskirtymą plokštelėje, prabėgus neribotam laiko tarpui. 
 
-\subsection{Praktiniai abribojimai}
+\subsection{Praktiniai modelio abribojimai}
 
 Šio darbo kontekste, temperatūros pakitimai vyksta dvimatinėje kvadratinėje erdvėje, kurios šoniniai taškai turi pastovią temperatūros vertę, kuri nekinta laikui bėgant.
+Norint supaprastinti uždavinį, neatsižvelgiama į plokštelės temperatūros laidumą.
 Kiekvienoje iteracijoje ne kraštinio taško temperatūra apskaičiuojama kaip jį supančių 4 taškų praėjusios iteracijos temperatūrų vidurkis.
 
 \section{Programos implementacija}
@@ -107,9 +110,15 @@ Kiekvienojame mazge yra 24 GB operatyviosios atminties (ang. RAM) ir jie turi pr
 
 http://mif.vu.lt/cluster/
 
+
+
 \subsection{Nuoseklusis algoritmas}
 
 Nuoseklusis algoritmas įgyvendintas C++ kalba. 
+Algoritmo pradžioje alokuojama atmintis dviems N*N dydžio masyvams, kur N yra matricos kraštinės ilgis: viename saugoma dabartinė matricos būsena, kitas yra pildomas naujomis reikšmėmis iteracijos metu.
+Naudojami viemačiai masyvai, nes didžioji dalis OpenMPI biblietekos funkcijų, kuri buvo naudotos lygiagretinant algoritmą, tikisi vienačius masyvų duomenų perdavimui, o nuoseklaus algortimo veikimui vienmačių ir dvimačių masyvų naudojimas nedaro didelės įtakos algoritmo veikimo laikui.
+Pirmasis masyvas užpildomas pradine matricos būsena, ir tada iteracija per matricos kartas, konverguojant į galutinę matricos temperatūrų būseną.
+Kiekvienos įteracijos metu, kiekvienam vidiniam matricos taškui yra priskiriama reikė, lygi jį supančių 4 taškų vidurkiui, o kraštinės matricos reikšmės nekinta.
 
 \subsection{Lygiagretūs algortimai}
 

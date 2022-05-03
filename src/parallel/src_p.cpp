@@ -225,7 +225,7 @@ public:
     {
         termodynamics(current_matrix, block_row_count, matrix_config.dimention, &temp_matrix);
         copy(temp_matrix, temp_matrix + total_blocksize, current_matrix);
-        communicate();
+        // communicate();
     }
 
     void communicate()

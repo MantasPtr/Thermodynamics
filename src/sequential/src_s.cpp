@@ -15,7 +15,7 @@
 
 void termodynamics(double *matrix, int matrix_dimention, double **result_matrix)
 {
-    double t1 = getTime();
+    // double t1 = getTime();
     double *next_matrix = *result_matrix;
     for (int i = 0; i < matrix_dimention; i++)
     {
@@ -37,7 +37,7 @@ void termodynamics(double *matrix, int matrix_dimention, double **result_matrix)
             }
         }
     }
-    double t2 = getTime();
+    // double t2 = getTime();
     // printf("update time: %.3f\n", t2 - t1);
 }
 
