@@ -105,34 +105,34 @@ public:
 
     void send()
     {
-        // if (proc_id_before >= 0)
-        // {
-        //     if_debug_com(printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before));
-        //     if_debug_com(printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize));
-        //     if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + matrix_config.dimention + communication_size]));
-        //     MPI_Isend(
-        //         temp_matrix + first_row_offset + matrix_config.dimention, // SKIP 1 row as it has the a border values
-        //         communication_size,
-        //         MPI_DOUBLE,
-        //         proc_id_before,
-        //         mpi_com_tag,
-        //         MPI_COMM_WORLD,
-        //         &request_send_before);
-        // }
-        if (proc_id_after < proc_config.proc_count)
+        if (proc_id_before >= 0)
         {
-            if_debug_com(printf("core %d sending after %d \n", proc_config.proc_id, proc_id_after));
-            if_debug_com(printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, total_blocksize));
-            if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + last_row_offset, temp_matrix[last_row_offset + communication_size]));
+            if_debug_com(printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before));
+            if_debug_com(printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize));
+            if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + matrix_config.dimention + communication_size]));
             MPI_Isend(
-                temp_matrix + last_row_offset - matrix_config.dimention, // skipping to where data will be received - last row since we send previous to last row
+                temp_matrix + first_row_offset + matrix_config.dimention, // SKIP 1 row as it has the a border values
                 communication_size,
                 MPI_DOUBLE,
-                proc_id_after,
+                proc_id_before,
                 mpi_com_tag,
                 MPI_COMM_WORLD,
-                &request_send_after);
+                &request_send_before);
         }
+        // if (proc_id_after < proc_config.proc_count)
+        // {
+        //     if_debug_com(printf("core %d sending after %d \n", proc_config.proc_id, proc_id_after));
+        //     if_debug_com(printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, total_blocksize));
+        //     if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + last_row_offset, temp_matrix[last_row_offset + communication_size]));
+        //     MPI_Isend(
+        //         temp_matrix + last_row_offset - matrix_config.dimention, // skipping to where data will be received - last row since we send previous to last row
+        //         communication_size,
+        //         MPI_DOUBLE,
+        //         proc_id_after,
+        //         mpi_com_tag,
+        //         MPI_COMM_WORLD,
+        //         &request_send_after);
+        // }
     };
 
     void receive()
