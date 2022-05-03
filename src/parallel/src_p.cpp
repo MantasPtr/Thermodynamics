@@ -157,7 +157,8 @@ public:
             if_debug_com(printf("core %d last_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, last_row_offset, communication_size, total_blocksize));
             if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + last_row_offset, current_matrix[last_row_offset + communication_size]));
             MPI_Irecv(
-                current_matrix + last_row_offset,
+                current_matrix,
+                // current_matrix + last_row_offset,
                 communication_size,
                 MPI_DOUBLE,
                 proc_id_before,
