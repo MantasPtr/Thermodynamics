@@ -172,16 +172,16 @@ public:
         int all_request_counter = 0;
         if (proc_id_after < proc_config.proc_count)
         {
-            all_requests[all_request_counter] = request_send_after;
-            all_requests[all_request_counter + 1] = request_recv_after;
-            all_request_counter += 2;
+            // all_requests[all_request_counter] = request_send_after;
+            all_requests[all_request_counter] = request_recv_after;
+            all_request_counter += 1;
         }
-        // if (proc_id_before >= 0)
-        // {
-        //     all_requests[all_request_counter] = request_recv_before;
-        //     all_requests[all_request_counter + 1] = request_send_before;
-        //     all_request_counter += 2;
-        // }
+        if (proc_id_before >= 0)
+        {
+            // all_requests[all_request_counter] = request_recv_before;
+            all_requests[all_request_counter] = request_send_before;
+            all_request_counter += 1;
+        }
         if_debug_com(printf("WAITING - proc %d - all_request_counter %d pointers %p %p %p %p\n", proc_config.proc_id, all_request_counter, all_requests[0], all_requests[1], all_requests[2], all_requests[3]));
         MPI_Waitall(all_request_counter, all_requests, MPI_STATUSES_IGNORE);
     }
