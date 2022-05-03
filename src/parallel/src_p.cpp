@@ -105,20 +105,20 @@ public:
 
     void send()
     {
-        // if (proc_id_before >= 0)
-        // {
-        //     if_debug_com(printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before));
-        //     if_debug_com(printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize));
-        //     if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + matrix_config.dimention + communication_size]));
-        //     MPI_Isend(
-        //         temp_matrix + first_row_offset + matrix_config.dimention, // SKIP 1 row as it has the a border values
-        //         communication_size,
-        //         MPI_DOUBLE,
-        //         proc_id_before,
-        //         mpi_com_tag,
-        //         MPI_COMM_WORLD,
-        //         &request_send_before);
-        // }
+        if (proc_id_before >= 0)
+        {
+            if_debug_com(printf("core %d sending before %d \n", proc_config.proc_id, proc_id_before));
+            if_debug_com(printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize));
+            if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, temp_matrix, temp_matrix + first_row_offset, temp_matrix[first_row_offset + matrix_config.dimention + communication_size]));
+            MPI_Isend(
+                temp_matrix + first_row_offset + matrix_config.dimention, // SKIP 1 row as it has the a border values
+                communication_size,
+                MPI_DOUBLE,
+                proc_id_before,
+                mpi_com_tag,
+                MPI_COMM_WORLD,
+                &request_send_before);
+        }
         if (proc_id_after < proc_config.proc_count)
         {
             if_debug_com(printf("core %d sending after %d \n", proc_config.proc_id, proc_id_after));
@@ -137,20 +137,20 @@ public:
 
     void receive()
     {
-        // if (proc_id_after < proc_config.proc_count)
-        // {
-        //     if_debug_com(printf("core %d receiving after %d \n", proc_config.proc_id, proc_id_after));
-        //     if_debug_com(printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize));
-        //     if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + first_row_offset, current_matrix[first_row_offset + communication_size]));
-        //     MPI_Irecv(
-        //         current_matrix + first_row_offset,
-        //         communication_size,
-        //         MPI_DOUBLE,
-        //         proc_id_after,
-        //         mpi_com_tag,
-        //         MPI_COMM_WORLD,
-        //         &request_recv_after);
-        // }
+        if (proc_id_after < proc_config.proc_count)
+        {
+            if_debug_com(printf("core %d receiving after %d \n", proc_config.proc_id, proc_id_after));
+            if_debug_com(printf("core %d first_row_offset %d com_size %d matrix size %d \n", proc_config.proc_id, first_row_offset, communication_size, total_blocksize));
+            if_debug_com(printf("core %d matrix %p %p %f\n", proc_config.proc_id, current_matrix, current_matrix + first_row_offset, current_matrix[first_row_offset + communication_size]));
+            MPI_Irecv(
+                current_matrix + first_row_offset,
+                communication_size,
+                MPI_DOUBLE,
+                proc_id_after,
+                mpi_com_tag,
+                MPI_COMM_WORLD,
+                &request_recv_after);
+        }
         if (proc_id_before >= 0)
         {
             if_debug_com(printf("core %d receiving before %d \n", proc_config.proc_id, proc_id_before));
@@ -174,14 +174,14 @@ public:
         if (proc_id_after < proc_config.proc_count)
         {
             all_requests[all_request_counter] = request_send_after;
-            // all_requests[all_request_counter] = request_recv_after;
-            all_request_counter += 1;
+            all_requests[all_request_counter + 1] = request_recv_after;
+            all_request_counter += 2;
         }
         if (proc_id_before >= 0)
         {
             all_requests[all_request_counter] = request_recv_before;
-            // all_requests[all_request_counter] = request_send_before;
-            all_request_counter += 1;
+            all_requests[all_request_counter + 1] = request_send_before;
+            all_request_counter += 2;
         }
         if_debug_com(printf("WAITING - proc %d - all_request_counter %d pointers %p %p %p %p\n", proc_config.proc_id, all_request_counter, all_requests[0], all_requests[1], all_requests[2], all_requests[3]));
         MPI_Waitall(all_request_counter, all_requests, MPI_STATUSES_IGNORE);
