@@ -7,12 +7,6 @@
 #include "../common/config_reader.h"
 #include "../common/time_utils.h"
 
-// #define MATRIX_DIMENTION 10
-// #define MAX_MATRIX_VALUE 1.0
-// #define MAX_ITERATION_COUNT 300
-// #define DRAW_FREQUENCY 10
-// #define USE_ABS_SCALE false
-
 void termodynamics(double *matrix, int matrix_dimention, double **result_matrix)
 {
     // double t1 = getTime();
@@ -52,6 +46,7 @@ int main(int argc, char **argv)
     double start_time = getTime();
 
     Configuration config = read_config(config_location);
+    printf("config read time: %.6f\n", getTime() - start_time);
 
     auto MATRIX_DIMENTION = config.matrix.dimention;
     auto MAX_MATRIX_VALUE = config.matrix.max_value;
