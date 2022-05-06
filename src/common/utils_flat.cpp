@@ -47,7 +47,7 @@ double *generate_part_of_the_matrix(int matrix_dimention, double max_value, int 
 
     for (int i = 0; i < matrix_dimention; i++)
     {
-        double value = (sin((double)i / matrix_dimention * 2 * PI * NUMBER_OF_WAVES) + 1) * 0.5 * max_value;
+        double value = abs(sin((double)i / matrix_dimention * PI * NUMBER_OF_WAVES)) * max_value;
         if (column_start == 0)
             matrix[i] = value;
         if (matrix_dimention == column_end)

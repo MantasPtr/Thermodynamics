@@ -37,13 +37,14 @@ void termodynamics(double *matrix, int matrix_dimention, double **result_matrix)
 
 int main(int argc, char **argv)
 {
+
+    double start_time = getTime();
     string config_location = "config.ini";
     if (argc == 2)
     {
         // argv[0] - program name
         config_location = argv[1];
     }
-    double start_time = getTime();
 
     Configuration config = read_config(config_location);
     printf("config read time: %.6f\n", getTime() - start_time);
