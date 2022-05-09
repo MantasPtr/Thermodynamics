@@ -41,16 +41,16 @@
 \sectionnonum{Įvadas}
 
 Kompiuterinės simuliacijos yra svarbi modernių tyrimų dalis. 
-Norint elektyviai atlikti sudėtingas simuliacijas, dažnai neužtenka vieno kompiuterio branduolio resursų, ir reikia paskirtyti darbą kelioms procesoriaus gijoms.
-Tai galima padaryti išnaudojant centriniam procesoriuje esančius branduolius ir gijas, naudojant grafinius procesorių, ar pasiteliant superkompiuteriuose esančias sujungtus mazgus, taip išnaudojant daugiau nei vieną  centrinį ar grafinį procesorių.
+Norint elektyviai atlikti sudėtingas simuliacijas, dažnai neužtenka vieno kompiuterio branduolio resursų, ir reikia paskirstyti darbą kelioms procesoriaus gijoms.
+Tai galima padaryti išnaudojant centriniam procesoriuje esančius branduolius ir gijas, naudojant grafinius procesorių, ar pasitekiant superkompiuteriuose esančias sujungtus mazgus, taip išnaudojant daugiau nei vieną  centrinį ar grafinį procesorių.
 
 Viena tipinė lygiagretino užduotis yra šilumos lygties sprendimas. 
 Šilumos lygtis yra vienas iš Puasono lygties (ang. Poisson's equation) pritaikymo galimybių. 
 Šios dalinės diferencialinės lygtys plačiai naudojamos fizikoje, sprendžiant elektrostatikos \cite{house2008analytic}, gravitacijos, magnetizmo \cite{blakely1996potential}, pastovios būsenos temperatūrų \cite {berntsson2001numerical} ir hidrodinamikos \cite{kadanoff1985simulating} problemas. 
 Ši dalinė diferencialinė lygtis turi kelis sprendimų būdus, kurių vienas yra naudojant baigtinių skirtumų metodą (ang. finite difference method) \cite{yoon2015analyses}.
-Šis metodas leidžia apskaičiuoti šilumos pasiskirtymą tam tikrame apribotame plote, žinant ploto kraštinių taškų temperatūrą.
-Norint efekyviau apskaičiuoti temperatūros pasiskirtymą plote, galima pradinį plotą suskirtyti į dalis, ir vykdyti temperatūros skaičiavimus atskirtuose plotuose lygiagrečiai.
-Šis darbas nagrinėja šilumos lygties sprendimo galimybes, naudojant centrinius procesorius (ang. CPU) lygiagrečiam lygities spręndimui apribotame plote, ir palygina lygiagretaus algortimo pagreitėjimą ir efektyvumą. 
+Šis metodas leidžia apskaičiuoti šilumos pasiskirstymą tam tikrame apribotame plote, žinant ploto kraštinių taškų temperatūrą.
+Norint efektyviau apskaičiuoti temperatūros pasiskirstymą plote, galima pradinį plotą suskirstyti į dalis, ir vykdyti temperatūros skaičiavimus atskirtuose plotuose lygiagrečiai.
+Šis darbas nagrinėja šilumos lygties sprendimo galimybes, naudojant centrinius procesorius (ang. CPU) lygiagrečiam lygties spręndimui apribotame plote, ir palygina lygiagretaus algoritmo pagreitėjimą ir efektyvumą. 
 
 
 % Įvade apibūdinamas darbo tikslas, temos aktualumas ir siekiami rezultatai. Darbo įvadas neturi
@@ -100,18 +100,18 @@ Norint efekyviau apskaičiuoti temperatūros pasiskirtymą plote, galima pradin�
 
 
 Šio darbo tyrimo objektas - šilumos laidumo lygtis \cite{burden2011numerical}. 
-Šilumos pasiskitymą erdvėje aprašo Puasono lygtis dvimatei erdvei:
+Šilumos pasiskirstymą erdvėje aprašo Puasono lygtis dvimatei erdvei:
 
 \[ \frac{∂^2 u}{∂ x^2}(x,y)+\frac{∂^2 u}{∂ y^2}(x,y) = f(x,y) \]
 
-Kadangi šiame darbe bus nagrinėjamas erdvė be papildomų vidinių šilumos šaltinių, todėl $f(x,y) = 0 $, o temperatūros pasisiskirtymą lemia kraštinių taškų temperatūra.
+Kadangi šiame darbe bus nagrinėjamas erdvė be papildomų vidinių šilumos šaltinių, todėl $f(x,y) = 0 $, o temperatūros pasiskirstymą lemia kraštinių taškų temperatūra.
 
 \[ \frac{∂^2 u}{∂ x^2}(x,y)+\frac{∂^2 u}{∂ y^2}(x,y) = 0 \]
 
 Ši lygtis dar yra žinoma kaip Laplaso lygtis (ang. Laplace's equation).
 Norint šia lygtį pritaikyti praktikoje, naudodami baigtinių skirtingų metodą apibrėžiame erdvę - matricą, kurioje bus skaičiuojama temperatūra, pradinę sistemos temperatūra šoniniuose ir vidiniuose taškuose.
 
-Šiame rašto darbe nagrinėjamas temperatūros pasisiskirtymą kvadratinėje erdvėję, kurią susikirtysime į vienodo dydžio kvadratinius taškus, turinčius savo temperatūrą.
+Šiame rašto darbe nagrinėjamas temperatūros pasiskirstymą kvadratinėje erdvėje, kurią suskirstysime į vienodo dydžio kvadratinius taškus, turinčius savo temperatūrą.
 Tada, taikydami baigtinių skirtumų metodą, gauname, kad vidinių taško temperatūra yra lygį jį supančių 4 taškų temperatūrų vidurkiui (\ref{img:5point} paveikslėlis). 
 Matematiškai tai galima išreikšti kaip:
 
@@ -122,15 +122,15 @@ kur $u_{x,y}$ - taško temperatūra taške koordinatėse $x,y$.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{img/5point.png}
-    \caption{Temperatūros pasiskirtymas vidiniuose matricos taškuose}
+    \caption{Temperatūros pasiskirstymas vidiniuose matricos taškuose}
     \label{img:5point}
 \end{figure}
 
-Norėdami išspręsti šias lygčiu sistemas, naudosime Jakobi iteracinį metodą \cite{burden2011numerical}, kiekvienos iteracijos metu formulės kintamųjų reiškmės keisdami praėjusios iteracijos reikšmėmis.
+Norėdami išspręsti šias lygčių sistemas, naudosime Jakobi iteracinį metodą \cite{burden2011numerical}, kiekvienos iteracijos metu formulės kintamųjų reiškmes keisdami praėjusios iteracijos reikšmėmis.
 Laikysime, kad sistema pasiekė galutinę savo būsena, kai taško temperatūrų skirtumas skirtingų iteracijų metu bus mažesnis už norima paklaida.
 
-Kraštinių taškų temperatūros pasiskirtymas nulemia galutinį temperatūros pasiskirtymą erdvėje.
-Vidinių taškų pradinis temperatūros pasiskirtymas įtakos galinam temperatūros pasiskirtymui neturi, tačiau gali turėti įtakos konvergacijos greičiui.
+Kraštinių taškų temperatūros pasiskirstymas nulemia galutinį temperatūros pasiskirstymą erdvėje.
+Vidinių taškų pradinis temperatūros pasiskirstymas įtakos galiniam temperatūros pasiskirstymui neturi, tačiau gali turėti įtakos konvergencijos greičiui.
 Kraštinių taškų temperatūra šito tyrimo būdu aprašomą kaip:
 
 \[ f(x, 0) = f(x, N-1) = |sin(x/N * 2\pi * 5/2)| = |sin(\frac{5\pi * x}{N})| \], 
@@ -138,25 +138,25 @@ Kraštinių taškų temperatūra šito tyrimo būdu aprašomą kaip:
 kur N yra matricos kraštinės taškų skaičius.
 Ši formulė pirmajai ir paskutinei eilutei priskiria 5 $sin$ bangų teigiamas reikšmes.
 Likusiems taškams priskiriama 0 temperatūra.
-Šio darbo metu taškams prikiramos temperatūros reikšmės nuo 0 iki 1 imtinai, taip leidžiant modeliuoti į realia objekto temperatūra taikant paprasta proporcija.
-Vizualiai pradinis temperatūrų pasiskirtymas matomas \ref{img:start} paveikslėlyje.
+Šio darbo metu taškams priskiriamos temperatūros reikšmės nuo 0 iki 1 imtinai, taip leidžiant modeliuoti į realia objekto temperatūra taikant paprasta proporcija.
+Vizualiai pradinis temperatūrų pasiskirstymas matomas \ref{img:start} paveikslėlyje.
 Juodi taškai atitinka 1 reikšmę, balti - 0.
-Uždavinio tikslas - nustatyti galutinį temperatūros pasiskirtymą plokštelėje, kai temperatūra plokštelėje nebekinta.
+Uždavinio tikslas - nustatyti galutinį temperatūros pasiskirstymą plokštelėje, kai temperatūra plokštelėje nebekinta.
 Leistina paklaida (temperatūros skirtumas kuri pasiekus laikysime kad programa pasiekė galutinę savo būseną) šio tyrimo eksperimentų metu buvo 0.001.  
-Vizualiai galutinis temperatūros pasiskirtymas matomas \ref{img:end} paveikslėlyje.
-Laikas per kurį temperatūra pasiskirto erdvėje, erdvė sudarančios medžiagų šiluminis laidumas šiame darbe nėra nagrinėjami. 
+Vizualiai galutinis temperatūros pasiskirstymas matomas \ref{img:end} paveikslėlyje.
+Laikas per kurį temperatūra pasiskirsto erdvėje, erdvė sudarančios medžiagų šiluminis laidumas šiame darbe nėra nagrinėjami. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{img/image_0000000.png}
-    \caption{Pradinis temperatūros pasiskirtymas}
+    \caption{Pradinis temperatūros pasiskirstymas}
     \label{img:start}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.7]{img/image_1000000.png}
-    \caption{Galutinis temperatūros pasiskirtymas plokštelėje}
+    \caption{Galutinis temperatūros pasiskirstymas plokštelėje}
     \label{img:end}
 \end{figure}
 
@@ -167,24 +167,24 @@ Laikas per kurį temperatūra pasiskirto erdvėje, erdvė sudarančios medžiag�
 
 \subsection{Programos testavimo aplinka}
 
-Siekiant išlaikyti vienodas sąlygas ir ištestuoti algoritmą turint didelį centinių procesorių kiekį, visi šiame darbe aprašyti eksperimentai buvo vykdomi Vilniaus Universiteto Matemematikos ir Informatikos fakulteto Skaitmeninių tyrimų ir skaičiavimų centro paskirstytų skaičiavimų tinkle.
-Šio darbo rašymo metu buvo naudojamas „beta“ telkinys, kurį sudaro 56 (testavimo metu praktiškai buvo pasiekiami tik 42) mazgai turinys po 2 Intel Xeon X5650 procesius, kurių kiekvienas turi po 6 branduolius. 
-Kiekvienojame mazge yra 24 GB operatyviosios atminties (ang. RAM) ir jie turi prieigą prie 20Gbit/s infiniband tinklo.
-Skaičiavimų tinklę buvo instaliuota Debian operacinė sistemą, lygiagrečiam algoritmui buvo naudojamas OpenMP bibliotekos 6.3.0 versija.
+Siekiant išlaikyti vienodas sąlygas ir ištestuoti algoritmą turint didelį centinių procesorių kiekį, visi šiame darbe aprašyti eksperimentai buvo vykdomi Vilniaus Universiteto Matematikos ir Informatikos fakulteto Skaitmeninių tyrimų ir skaičiavimų centro paskirstytų skaičiavimų tinkle.
+Šio darbo rašymo metu buvo naudojamas „beta“ telkinys, kurį sudaro 56 (testavimo metu praktiškai buvo pasiekiami tik 42) mazgai turinys po 2 Intel Xeon X5650 procesorius, kurių kiekvienas turi po 6 branduolius. 
+Kiekviename mazge yra 24 GB operatyviosios atminties (ang. RAM) ir jie turi prieigą prie 20Gbit/s infiniband tinklo.
+Skaičiavimų tinkle buvo instaliuota Debian operacinė sistemą, lygiagrečiam algoritmui buvo naudojamas OpenMP bibliotekos 6.3.0 versija.
 Programoms paleisti buvo naudojama sistemoje esanti „Slurm“ užduočių valdymo sistema ir „short“ užduočių eilė, turinti 2 valandų ir 2 GB vienam naudojamam branduoliui limitą.
 
 \subsection{Nuoseklusis algoritmas}
 
 Nuoseklusis algoritmas įgyvendintas C++ kalba. 
 Algoritmo pradžioje alokuojama atmintis dviems N*N dydžio masyvams, kur N yra matricos kraštinės ilgis: viename saugoma dabartinė matricos būsena, kitas yra pildomas naujomis reikšmėmis iteracijos metu.
-Naudojami viemačiai masyvai, nes didžioji dalis OpenMPI biblietekos funkcijų, kuri buvo naudotos lygiagretinant algoritmą, tikisi vienačius masyvų duomenų perdavimui, o nuoseklaus algoritmo veikimui vienmačių ir dvimačių masyvų naudojimas nedaro didelės įtakos algoritmo veikimo laikui.
-Pirmasis masyvas užpildomas pradine matricos būsena, tada pradedamas iteracinis procesas, kai kiekvienos įteracijos metu, kiekvienam vidiniam matricos taškui yra priskiriama reikšmė, lygi jį supančių 4 taškų vidurkiui, o kraštinės matricos reikšmės nekinta.
+Naudojami vienmačiai masyvai, nes didžioji dalis OpenMPI bibliotekos funkcijų, kuri buvo naudotos lygiagretinant algoritmą, tikisi vienmačių masyvų duomenų perdavimui, o nuoseklaus algoritmo veikimui vienmačių ir dvimačių masyvų naudojimas nedaro didelės įtakos algoritmo veikimo laikui.
+Pirmasis masyvas užpildomas pradine matricos būsena, tada pradedamas iteracinis procesas, kai kiekvienos iteracijos metu, kiekvienam vidiniam matricos taškui yra priskiriama reikšmė, lygi jį supančių 4 taškų vidurkiui, o kraštinės matricos reikšmės nekinta.
 Taip pat iteracijos metu fiksuojamas maksimalus temperatūros pasikeitimas, skirtas nustatyti ar matrica pasiekė galutinė savo būseną.
-Ši reikšmė kiekvienos iteracijos palyginama su nustatyta paklaidos reikšme ir jei temperatūros pasikeitimas yra mažesnis už leistina paklaida, laikome kad matrica pasiekė pasavo galutinį temperatūrų pasiskirtymą.
+Ši reikšmė kiekvienos iteracijos palyginama su nustatyta paklaidos reikšme ir jei temperatūros pasikeitimas yra mažesnis už leistina paklaida, laikome kad matrica pasiekė pasavo galutinį temperatūrų pasiskirstymą.
 
 Testuojant nuoseklųjį algoritmą su skirtingais matricos kraštinės ilgio reikšmėmis (\ref{table:seq_time} lentelė), pastebėta kad algoritmo vykdymo laikas logoritmiškai priklauso matricos kraštinės ilgio.
-Padidinus kraštinės ilgį beveik 2 kartus, vykdymo laikas padidėjėja beveik 4 kartus, nes algoritmas nagrinėja šilumos pasiskirtymą dvimatinėjė erdvėje, todėl padidinus matricos kraštinės ilgį 2 kartus, duomenų kiekis padidėja 4 kartus.
-Matricos kraštinės ilgiai pasirinkti dvejeto laipsniai + 2, kad lygiagretinant algoritmą vidinės matricos reikšmes būtų padalinti skirtingams procesams vienodais kiekiais. 
+Padidinus kraštinės ilgį beveik 2 kartus, vykdymo laikas padidėja beveik 4 kartus, nes algoritmas nagrinėja šilumos pasiskirstymą dvimatinėje erdvėje, todėl padidinus matricos kraštinės ilgį 2 kartus, duomenų kiekis padidėja 4 kartus.
+Matricos kraštinės ilgiai pasirinkti dvejeto laipsniai + 2, kad lygiagretinant algoritmą vidinės matricos reikšmes būtų padalinti skirtingiems procesams vienodais kiekiais. 
 Pridedamos dvi eilutės šiame skaičiavime atitinka dvi matricos kraštines - eilutes ir stulpelius kurių temperatūrų reikšmės nekinta.
 Testuojant nuoseklųjį algoritmą, kai matricos kraštinę sudaro 8194 taškai, buvo pasiektas sistemos užduočių vykdymo laiko limitas (2 valandos).
 
@@ -201,20 +201,20 @@ Testuojant nuoseklųjį algoritmą, kai matricos kraštinę sudaro 8194 taškai,
         2050                                                     & \multicolumn{1}{r|}{577.458}            & \multicolumn{1}{r|}{572.498}    & \multicolumn{1}{r|}{582.138}    & 577.365                       \\ \hline
         4098                                                     & \multicolumn{1}{r|}{2393.624}           & \multicolumn{1}{r|}{2421.341}   & \multicolumn{1}{r|}{2362.241}   & 2392.402                      \\ \hline
     \end{tabular}
-    \caption{Nuoseklaus algortimo vykdymo laikas}
+    \caption{Nuoseklaus algoritmo vykdymo laikas}
     \label{table:seq_time}
 \end{table}
 
 
 \subsection{Lygiagretieji algoritmai}
 
-Pradžiai apribrėžsime kriterijus pagal kurios bus vertinami lygiagretus algoritmas.
-Vienas iš pagrindinių vertinimo kriterijų yra algortimo pagreitėjimas, nusakantis kiek kartų greičiau lygiagretus algortimas, naudojantis $p$ branduolių, įvykdo užduotį už nuoseklųjį algoritmą \cite{eager1989speedup}.   
+Pradžiai apibrėšime kriterijus, pagal kurios bus vertinamas lygiagretus algoritmas.
+Vienas iš pagrindinių vertinimo kriterijų yra algoritmo pagreitėjimas, nusakantis kiek kartų greičiau lygiagretus algoritmas, naudojantis $p$ branduolių, įvykdo užduotį už nuoseklųjį algoritmą \cite{eager1989speedup}.   
 Algoritmo pagreitėjimas vertinamas kaip:
 
 \[ S(p) = \frac{t_s}{t_p} ,\]
 
-kur $p$ yra procesoriu skaičius, $t_s$ -  geriausias nuoseklaus algoritmo vykdymo laikas, $t_p$ - lygiagretaus algoritmo, naudojančio p procesorių, vykdymo laikas. 
+kur $p$ yra procesorių skaičius, $t_s$ -  geriausias nuoseklaus algoritmo vykdymo laikas, $t_p$ - lygiagretaus algoritmo, naudojančio p procesorių, vykdymo laikas. 
 
 Maksimalus įmanomas teorinis pagreitėjimas gali būti tiesinis. 
 Tai galėtų būti pasiekta duomenys yra padalinami į vienodas dalis, o komunikacijos tarp procesų nevyksta.
@@ -223,7 +223,7 @@ Tuomet pagreitėjimas yra lygus procesorių skaičiui:
 \[ S_{max}(p) = \frac{t_s}{t_s/p} = p .\]
 
 Jei lygiagretaus algoritmo pagreitėjimo reikšmė yra didesnė nei procesorių skaičių - $S(p) > p$ - pasiekiamas supertiesininis (ang. superlinear) pagreitėjimas. 
-Tai gali atsitikti dėl neoptimaliai įgyvendinto nuoseklaus algoritmo, arba netiksliai įgyvendinto lygiagretaus algoritmo, kai yra praleidžiami žingsiniai.
+Tai gali atsitikti dėl neoptimaliai įgyvendinto nuoseklaus algoritmo, arba netiksliai įgyvendinto lygiagretaus algoritmo, kai yra praleidžiami žingsniai.
 
 Maksimalus praktinis algoritmo pagreitėjimas priklauso nuo algoritmo dalies, kuri gali būti išlygiagretinamas. 
 Jei algoritmo dalį, kuri negali būti išlygiagretinama, pažymėsime $f$ ($0 \le f \le 1$), trumpiausias lygiagrečios programos vykdymo laikas bus lygus $f*t_s+ (1-f)*t_s/p$, o maksimalus pagreitėjimas apibrėžiamas kaip Amdahl'o dėsnis \cite{amdahl1967validity}:
@@ -234,30 +234,30 @@ Jei algoritmo dalį, kuri negali būti išlygiagretinama, pažymėsime $f$ ($0 \
 
 
 Šiame darbe nagrinėjamo lygiagretaus algoritmo nuosekliojoje dalyje (t.y. dalyje kuri nėra išlygretinama) vyksta tik konfiguracinių parametrų nuskaitymas. 
-Taip pat nėra lygiagretinams paketų užkrovimas ir kitos prieš pagrindinės (ang. main) programos funkcija iškvietimą vykstančios operacijos, tačiau tai nedaro įtakos algoritmo tyrimui, nes laiko matavimas pradedamas tik iškvietus pagrindinę programos funkciją.
-Matricos kraštines suskaidžius į 2050 taškų, nuoseklaus algortimo konfiguracijos nuskaitymas vidutiniškai truko 0,002 sekundes (žymesime $t_{np}$), kai tuo metu likusieji skaičiavimai vidutiniškai užtruko 577,363 sekundes.
-Toks laiko santykis reikia kad nelygiatinama algoritmo dalis yra:
+Taip pat nėra lygiagretinamas paketų užkrovimas ir kitos prieš pagrindinės (ang. main) programos funkcija iškvietimą vykstančios operacijos, tačiau tai nedaro įtakos algoritmo tyrimui, nes laiko matavimas pradedamas tik iškvietus pagrindinę programos funkciją.
+Matricos kraštines suskaidžius į 2050 taškų, nuoseklaus algoritmo konfiguracijos nuskaitymas vidutiniškai truko 0,002 sekundes (žymėsime $t_{np}$), kai tuo metu likusieji skaičiavimai vidutiniškai užtruko 577,363 sekundes.
+Toks laiko santykis reikia kad nelygiagretinama algoritmo dalis yra:
 
 \[ f = \frac{t_{np}}{t_p} = \frac{0,002}{0,002+577,363} \approx 0.00000346 .\]
 
-Šis įvertis reiškia, kad maksimalus algortimo pagreitėjimas naudojant begalinį skaičių procesorių bus lygus:
+Šis įvertis reiškia, kad maksimalus algoritmo pagreitėjimas naudojant begalinį skaičių procesorių bus lygus:
 
 \[ \underset{p \rightarrow \inf}{S(p)} = \frac{1}{f} = \frac{1}{0.00000346} \approx 289017  ;\]
 
-o tai reiškia neišlygetinama algoritmo dalis turės įtakos lygiagretaus vykdymo laikui tik naudojant labai didelį procesų kiekį.
+o tai reiškia neišlygegretinama algoritmo dalis turės įtakos lygiagretaus vykdymo laikui tik naudojant labai didelį procesų kiekį.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{img/max_speedup.png}
-    \caption{Maksimalus lygiagretaus algortimo pagreitėjimo įverčio priklausomybė nuo procesorių skaičiaus}
+    \caption{Maksimalus lygiagretaus algoritmo pagreitėjimo įverčio priklausomybė nuo procesorių skaičiaus}
     \label{img:max_speedup}
 \end{figure}
 
 Maksimalaus pagreitėjimo reiškmes naudojant skirtus procesorių kiekius matomos \ref{img:max_speedup} grafike.
-Šio darbo ribose algortimas nebus tiriamas naudojant labai didelį procesorių kiekį, todėl net ir naudojant maksimalų procesorių kiekį (256),
+Šio darbo ribose algoritmas nebus tiriamas naudojant labai didelį procesorių kiekį, todėl net ir naudojant maksimalų procesorių kiekį (256),
 maksimalus pagreitėjimo reikšme bus artima procesorių skaičiui ($S(256) \approx 255.774$), todėl neišlygegretinta algoritmo dalis neribos algoritmo pagreitėjimo.  
 
-Taip pat lygiagretiems algortimams vertinti naudojama efektyvumo metrika \cite{eager1989speedup}.
+Taip pat lygiagretiems algoritmams vertinti naudojama efektyvumo metrika \cite{eager1989speedup}.
 Darant prielaidą, kad nuoseklusis algoritmas visada efektyviai išnaudoja jam priskirto procesoriaus resursą, efektyvumo metrika parodo kokia laiko dalį nuoseklusis sprendimas išnaudoja jam priskirtus procesorius.
 Efektyvumas, dažniausiai žymimas reide $E$, matematiškai išreiškiamas kaip nuoseklaus algoritmo ir lygiagretaus algoritmo padauginto iš naudotų branduolių skaičiaus vykdymo laiko santykis:
 
@@ -272,20 +272,20 @@ Taip pat efektyvumą galime išreikšti per algoritmo pagreitėjimą:
 
 \subsection{Duomenų dalinimas eilutėmis}
 
-Viena iš duomenų paskirtimo lygiagrečiajam algoritmui strategijų yra duomenis paskirtinyti eilutėmis (arba stulpeliais).
+Viena iš duomenų paskirstymo lygiagrečiajam algoritmui strategijų yra duomenis paskirstyti eilutėmis (arba stulpeliais).
 Norint $N*N$ dydžio matricos duomenis padalint duomenis $p$ procesams, kiekvienam procesui programos vykdymo pradžioje priskiriama po  $(\frac{N-2}{p}+2) * N$ taškų. 
 $N-2$ atitinka vidinių matricos stulpelių kiekį, kuris kinta laikui bėgant (2 atitinka išorinius matricos stulpelius turinčius pastovią temperatūrą). 
 Ši reikšmė padalinama iš procesų skaičiaus, ir kiekvienas procesui priskiriamos po 2 papildomas eilutes kurios yra naudojamos vidinių reikšmių skaičiavimui (\ref{img:distribution} paveikslėlis).
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.4]{img/distribution.png}
-    \caption{Duomenų padalinimas. 10 eilučiu padalinamos 4 procesams.}
+    \caption{Duomenų padalinimas. 10 eilučių padalinamos 4 procesams.}
     \label{img:distribution}
 \end{figure}
 
 
 Naudojant Jakobi iteracinį metodą, kiekvienos iteracijos metu, pirmos ir paskutinės padalintų eilučių reikšmės turi būti sinchronizuojamos tarp gretimas matricos dalis apdorojančių procesų \ref{img:sync}. 
-Pirmasis ir paskutinis procesas šonines reišmės sinchornizuoja tik su vienu iš procesu, nes viena iš jas sudarančių matricos eilučių atitinka pradinės matricos kraštines eilutes, turinčias pastovias reikšmes.
+Pirmasis ir paskutinis procesas šonines reikšmės sinchornizuoja tik su vienu iš procesu, nes viena iš jas sudarančių matricos eilučių atitinka pradinės matricos kraštines eilutes, turinčias pastovias reikšmes.
 
 \begin{figure}[H]
     \centering
@@ -298,7 +298,7 @@ Norint nustatyti, kada didžiausias temperatūrų iteracijų skirtumas pasiekė 
 kuris gavęs visas reišmes, įvertiną ar bent vienas procesoriaus lokalus skirtumas viršyja norima paklaidą, ir nusprendžia ar tęsti iteravimą.
 Norint išvengti visuotinio sinchronizavimo tarp visų branduolių ir pagrininio proceso kiekvienos iteracijos metu, maksimlaus pokyčio reikšmių siuntimas ir palyginimas vykdomas tik kas 100 iteracijų.
 
-\subsection{Lygiagretaus algortimo, kai duomenys padalinimo eilutėmis, analyzė}
+\subsection{Lygiagretaus algoritmo, kai duomenys padalinimo eilutėmis, analyzė}
 
 
 Lygiagretaus algoritmo veikimo laiko įverčiai, kai matricos kraštinę sudoro 2050 taškų pateikiami \ref{table:parallel2050} lentelėje. 
@@ -333,7 +333,7 @@ Kaip matoma \ref{img:parallel_time} grafike, vykdymo laikas atvirkšiai priklaus
 \end{figure}
 
 
-Taip pat lygiagretus algortimas buvo testuojamas kai matricos kraštinę sudarė 16386 taškai, vykdymo laikas matomas \ref{table:parallel16386} lentelė.
+Taip pat lygiagretus algoritmas buvo testuojamas kai matricos kraštinę sudarė 16386 taškai, vykdymo laikas matomas \ref{table:parallel16386} lentelė.
 Testuojant naudojant 64 ar mažiau branduolių, programos veikimo laikas viršijo 2 valandas, ir programa buvo sustabdyta. 
 Naudojant šią matricos kraštinės reikšmę nuosekliojo algoritmo programa viršydavo sistemos atminties limitą (2GB 1 branduoliui).
 
@@ -381,14 +381,14 @@ Naudojant šią matricos kraštinės reikšmę nuosekliojo algoritmo programa vi
 \end{figure}
 
 
-\ref{img:parallel_speedup} grafike matomas lygiagretaus algortimo logoritminis pagreitėjimas, tačiau Amdahl'o dėsnio \cite{amdahl1967validity} apibrėžiamas maksimalus pagreitėjimas nėra pasiekiamas - naudojant tokį branduolių kiekį pagreitėjimas turėtų būti artimas idealiam pagreitėjimui  $S_{max}(p)=p$.
+\ref{img:parallel_speedup} grafike matomas lygiagretaus algoritmo logoritminis pagreitėjimas, tačiau Amdahl'o dėsnio \cite{amdahl1967validity} apibrėžiamas maksimalus pagreitėjimas nėra pasiekiamas - naudojant tokį branduolių kiekį pagreitėjimas turėtų būti artimas idealiam pagreitėjimui  $S_{max}(p)=p$.
 Tai galimai nutinka dėl to, kad Amdahl'o dėsnis neatisižvelgia į komunikacijos tarp skirtingų procesorių kaštus.
 Tikslų programos skaičiavimų ir komunikacijos santykį įvertinti yra sunku, nes komunikacijos laikas gali skirtis laikas prikausomai ar komunikuojantys procesai naudoja to pačio ar skirtingų centrinių procesorių branduolius, 
 ir ar centriniai procesoriai yra toje pačioje ar skirtinguose motininėse plokštelėse. 
-Tas iš dalies matoma \ref{table:speedup} lentelėje, kad algortitmo efektyvumas naudojant 2 ir 4 branduolius yra artimas 1, o naudojant daugiau branduolių lygiagretaus sprendimo efektyvumas mažėja.
+Tas iš dalies matoma \ref{table:speedup} lentelėje, kad algoritmo efektyvumas naudojant 2 ir 4 branduolius yra artimas 1, o naudojant daugiau branduolių lygiagretaus sprendimo efektyvumas mažėja.
 Tai galima sieti su tuo kad testavimui naudoto paskirstytų skaičiavimų tinklo mazguose naudojami procesoriai, turinys 6 branduolius, todėl naudojant 2 ir 4 branduolius didelė tikimybė, kad bus naudojamas 1 fizinis procesorius, taip išvengiant didelių komunikacijos kaštai tarp atsikirų procesų.
-Taip pat, \ref{table:speedup} lentelėje matomas algortimo efektyvumo mažėjimas didinant branduolių skaičių, iš to galime daryti prielaidą, kad pradinius duomenis skaidant į vis mažesnes dalis, vis didesnę algoritmo vykdymo laiką užima komunikacija tarp skirtingus duomenis apdorojančių procesų.
-Nors testuojant su vis didesnių branduolių skaičiumi algortimo efektyvumas mažėja, pagreitėjimo metrika didinant naudojamų branduolių nenustoja didėti, iš to galima daryti prielaidą šių testų metu nebuvo rastas branduolių skaičius, kurį naudojant kominikacijos kaštai nusvertų gautą algoritmo pagreitėjimą padalinus užduotį į mažesnes dalis. 
+Taip pat, \ref{table:speedup} lentelėje matomas algoritmo efektyvumo mažėjimas didinant branduolių skaičių, iš to galime daryti prielaidą, kad pradinius duomenis skaidant į vis mažesnes dalis, vis didesnę algoritmo vykdymo laiką užima komunikacija tarp skirtingus duomenis apdorojančių procesų.
+Nors testuojant su vis didesnių branduolių skaičiumi algoritmo efektyvumas mažėja, lygiagretaus algoritmo pagreitėjimo metrika didinant naudojamų branduolių nenustoja didėti, iš to galima daryti prielaidą šių testų metu nebuvo rastas branduolių skaičius, kurį naudojant komunikacijos kaštai nusvertų gautą algoritmo pagreitėjimą, kai užduotis yra padalinama į mažesnes dalis. 
 
 % Medžiagos darbo tema dėstymo skyriuose pateikiamos nagrinėjamos temos detalės: pradinė me-
 % džiaga, jos analizės ir apdorojimo metodai, sprendimų įgyvendinimas, gautų rezultatų apibendrinimas.
@@ -407,12 +407,13 @@ Nors testuojant su vis didesnių branduolių skaičiumi algortimo efektyvumas ma
 
 \sectionnonum{Rezultatai ir išvados}
 
-Buvo implementuoti nuoseklusis ir lygiagretusis algoritmai, spendžiantys šilumos laidumo lygti Jacobi iteraciniu metodu naudojant baigtinių skirtumų schemą.
-Abu algortimai buvo ištestuoti naudojant prieinamus MIF superkompiuterio resursus, lygiagretusis algortimas buvo testuojamas naudojant iki 256 branduolių.
-Naudojant lygiagretųjį algortimą, buvo išspręstas uždavinys kurio dėl sistemų resursų apribojimų nebuvo įmanoma išspręsti nuosekliuoju algoritmu. 
-Buvo pasiektas lygiagrečiojo algortimo pagreitėjimas iki 95 kartų, o atlikta pagreitėjimo ir efektyvumo analizė parodė kad naudojant didesnį branduolių kiekį būtų galima dar labiau sutrumpinti skaičiavimo laiką.
+Šio darbo rašymo metu buvo implementuoti nuoseklusis ir lygiagretusis algoritmai, spendžiantys šilumos pasiskirstymo užduotį Jacobi iteraciniu metodu naudojant baigtinių skirtumų schemą.
+Abu algoritmai buvo ištestuoti naudojant prieinamus MIF superkompiuterio resursus, lygiagretusis algoritmas buvo testuojamas naudojant iki 256 branduolių.
+Naudojant lygiagretųjį algoritmą, buvo išspręstas uždavinys, kurio dėl sistemų resursų apribojimų nebuvo įmanoma išspręsti nuosekliuoju algoritmu. 
+Buvo pasiektas lygiagrečiojo algoritmo pagreitėjimas iki 95 kartų, o atlikta pagreitėjimo ir efektyvumo analizė parodė kad naudojant didesnį branduolių kiekį būtų galima dar labiau sutrumpinti skaičiavimo laiką.
+Sukurta programa, įgyvendinanti algoritmo sprendimą, yra konfiguruojama, leidžianti lengvai keisti pradines sąlygas ir ją perpanaudoti praktinių uždavinių sprendimams.
 
-Norint gauti geresnį lygiagretaus algoritmo pagreitėjimo ir efektyvumo rezultatus, būtų verta pabandyti kitokius duomenų dalinimo būdus, pvz kvadratais.
+Ateityje, norint gauti geresnį lygiagretaus algoritmo pagreitėjimo ir efektyvumo rezultatus, būtų verta pabandyti kitokius duomenų dalinimo būdus, (pvz kvadratais), pabandyti lygiagretizuoti sprendimą naudojant grafinius procesorius.
 % \subsection{Poskyris}
 % Citavimo pavyzdžiai: cituojamas vienas šaltinis \cite{PvzStraipsnLt}; cituojami
 % keli šaltiniai \cite{PvzStraipsnEn, PvzKonfLt, PvzKonfEn, PvzKnygLt, PvzKnygEn,
