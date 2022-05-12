@@ -7,3 +7,12 @@
 *.out
 src/mif/*.txt
 !src/mif/*.sh
+
+
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.run.xml
+*.toc
