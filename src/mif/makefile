@@ -18,6 +18,11 @@ submit-seq:
 	cat status.txt
 	cat status.txt | awk '{print $$4}' > id.txt
 
+submit-gpu:
+	sbatch thd-gpu.sh > status.txt
+	cat status.txt
+	cat status.txt | awk '{print $$4}' > id.txt
+
 status:
 	squeue -j $$(cat id.txt)
 

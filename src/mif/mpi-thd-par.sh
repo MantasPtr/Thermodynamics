@@ -1,7 +1,6 @@
 #!/bin/sh
-#SBATCH -p short
+#SBATCH -p main
 #SBATCH -n2
-#SBATCH -C beta
 #SBATCH -D /scratch/lustre/home/mape3071/Thermodynamics/src/parallel
 
 make compile

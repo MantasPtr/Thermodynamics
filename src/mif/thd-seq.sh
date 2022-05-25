@@ -1,7 +1,6 @@
 #!/bin/sh
-#SBATCH -p short
+#SBATCH -p main
 #SBATCH -n1
-#SBATCH -C beta
 #SBATCH -D /scratch/lustre/home/mape3071/Thermodynamics/src/sequential
 
 make compile
