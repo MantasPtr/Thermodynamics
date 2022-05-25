@@ -32,5 +32,5 @@ output:
 output-seq:
 	cat /scratch/lustre/home/mape3071/Thermodynamics/src/sequential/slurm-$$(cat id.txt).out
 
-output-cuda:
+output-gpu:
 	cat /scratch/lustre/home/mape3071/Thermodynamics/src/cuda/slurm-$$(cat id.txt).out
