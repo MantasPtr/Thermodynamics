@@ -129,19 +129,19 @@
      {\large \@papertype}%
   \end{center}
   \@ifundefined{@secondauthor}{
-     \vskip 3.2cm
+     \vskip 3cm
      \begin{flushright}
         \large
         \singlespacing
         {\begin{tabular}[t]{l l}%
         \bigskip Atliko: &\; \@author \hfill \@signatureplace \\
         \bigskip Darbo vadovas: &\; \@supervisor \hfill  \@signatureplace \\
-        % Darbo recenzentas: &\; \@reviewer \hfill \@signatureplace
+        Darbo recenzentas: &\; \@reviewer \hfill \@signatureplace
         \end{tabular} \par}%
      \end{flushright}
-     \vskip 4.2cm
+     \vskip 4cm
    }{
-     \vskip 3cm
+     \vskip 2.8cm
      \begin{flushright}
         \large
         \singlespacing
@@ -149,10 +149,10 @@
         \bigskip Atliko: &\; \@author \hfill \@signatureplace \\
         \bigskip &\; \@secondauthor \hfill \@signatureplace \\
         \bigskip Darbo vadovas: &\; \@supervisor \hfill  \@signatureplace \\
-        % Darbo recenzentas: &\; \@reviewer \hfill \@signatureplace
+        Darbo recenzentas: &\; \@reviewer \hfill \@signatureplace
         \end{tabular} \par}%
      \end{flushright}
-     \vskip 4cm
+     \vskip 3.8cm
    }
 
   \begin{center}
@@ -196,11 +196,6 @@
     \section*{#1}%
     \addcontentsline{toc}{section}{#1}% 
 }
-
-\newcommand{\subsectionnonum}[1]{%
-    \subsection*{#1}%
-}
-
 
 % Skyriaus pavadinimas, neturintis numerio bei neįeinantis į turinį
 \newcommand{\sectionnonumnocontent}[1]{%

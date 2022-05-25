@@ -16,7 +16,7 @@ Configuration read_config(string filename)
     INIReader reader(filename);
     if (reader.ParseError() < 0)
     {
-        cerr << "Can't load" << filename << "\n";
+        cerr << "Can't load " << filename << "\n";
         throw invalid_argument("Can't load configuration file");
     }
 
