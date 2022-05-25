@@ -7,7 +7,7 @@ Example run:
 ```
  ssh mape3071@uosis.mif.vu.lt 
  kinit
- ssh cluster
+ ssh hpc
  cd /scratch/lustre/home/mape3071/Thermodynamics/src/mif
  sbatch mpi-thd-par.sh
  squeue -j 982659
