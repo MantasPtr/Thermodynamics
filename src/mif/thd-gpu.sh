@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #SBATCH -p gpu
 #SBATCH --gres gpu:1
 #SBATCH -n1
