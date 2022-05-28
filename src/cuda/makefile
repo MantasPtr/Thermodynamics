@@ -1,7 +1,7 @@
 default: thermo
 
 mif: cleanup
-	nvcc -o thermo.sh --ccbin ${which gcc} -gencode arch=compute_61,code=sm_61  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
+	nvcc -o thermo.sh --ccbin /usr/bin/gcc -gencode arch=compute_61,code=sm_61  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
 	./thermo.sh ../common/config.ini
 
 tests:
@@ -9,7 +9,7 @@ tests:
 	./cuda_test.sh
 
 thermo: cleanup
-	nvcc -o thermo.sh --ccbin ${which gcc} -gencode arch=compute_61,code=sm_61  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
+	nvcc -o thermo.sh --ccbin /usr/bin/gcc -gencode arch=compute_61,code=sm_61  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
 	./thermo.sh ../common/config.ini
 
 
