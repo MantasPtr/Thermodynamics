@@ -18,7 +18,7 @@ thermo_float: cleanup
 	./thermo_float.sh ../common/config.ini
 
 memdebug:
-	nvcc -o thermo_float.sh -lineinfo -gencode arch=compute_61,code=sm_61  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
+	nvcc -o thermo_float.sh -ccbin /usr/bin/gcc -lineinfo -gencode arch=compute_61,code=sm_61  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
 	cuda-memcheck ./thermo.sh ../common/config.ini
 
 
