@@ -16,6 +16,7 @@ struct CalculationConfig
 {
     int max_iteration_count;
     double delta;
+    int cuda_split;
 };
 
 struct DrawingConfig

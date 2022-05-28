@@ -26,6 +26,7 @@ Configuration read_config(string filename)
 
     config.calculation.max_iteration_count = reader.GetInteger("calculation", "max_iteration_count", 1);
     config.calculation.delta = reader.GetReal("calculation", "delta", 0.1);
+    config.calculation.cuda_split = reader.GetInteger("calculation", "cuda_split", 256);
 
     config.drawing.draw_frequency = reader.GetInteger("drawing", "draw_frequency", 10);
     config.drawing.use_abs_scale = reader.GetBoolean("drawing", "use_abs_scale", false);
