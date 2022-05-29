@@ -70,10 +70,12 @@ int main(int argc, char **argv)
     {
         delta = termodynamics(matrix, MATRIX_DIMENTION, &result_matrix);
         swap(matrix, result_matrix);
+        if (i % 10000 == 0)
+        {
+            printf("iteraction count: %d, max_delta: %.7f\n", i, delta);
+        }
         if (DRAW_FREQUENCY > 0 && i % DRAW_FREQUENCY == 0)
         {
-            printf("iteraction count: %d, max_delta: %.6f\n", i, delta);
-
             save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
         }
         i++;
