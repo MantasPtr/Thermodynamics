@@ -114,7 +114,7 @@ int main(int argc, char **argv)
             GE(cudaMemcpy(matrix, cuda_result_matrix, size, cudaMemcpyDeviceToHost));
             save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
         }
-        if ((USE_DIFF) && (i % 1000 == 0))
+        if ((USE_DIFF) && (i % 10000 == 0))
         {
             GE(cudaMemcpy(diff_matrix, cuda_diff_matrix, size, cudaMemcpyDeviceToHost));
             delta = largestElement(diff_matrix, MATRIX_DIMENTION);
