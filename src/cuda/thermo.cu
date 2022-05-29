@@ -101,7 +101,7 @@ int main(int argc, char **argv)
         GE(cudaMemcpy(cuda_diff_matrix, diff_matrix, size, cudaMemcpyHostToDevice));
     }
     int SPLIT = CUDA_SPLIT;
-    printf("using %d %d data split \n", (MATRIX_DIMENTION * MATRIX_DIMENTION + SPLIT - 1) / SPLIT, SPLIT);
+    printf("data - %dx%d using %d %d data split \n", MATRIX_DIMENTION, MATRIX_DIMENTION, (MATRIX_DIMENTION * MATRIX_DIMENTION + SPLIT - 1) / SPLIT, SPLIT);
     int i = 0;
     double delta = MAX_MATRIX_VALUE;
     while (i < MAX_ITERATION_COUNT && delta > MAX_DELTA)

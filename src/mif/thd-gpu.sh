@@ -3,5 +3,5 @@
 #SBATCH --gres gpu:1
 #SBATCH -n1
 #SBATCH -D /scratch/lustre/home/mape3071/Thermodynamics/src/cuda
-which gcc
-make mif
+make mif_compile
+make mif_test
