@@ -1,8 +1,8 @@
 default: thermo
 
 mif_compile:
-	# nvcc -o thermo.sh -ccbin /usr/bin/gcc -gencode arch=compute_70,code=sm_70  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
-	nvcc -o thermo.sh -ccbin /usr/bin/gcc   -gencode arch=compute_70,code=sm_70  ../common/utils_flat_float.cpp ../common/display_utils_flat_float.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo_float.cu
+	nvcc -o thermo.sh -ccbin /usr/bin/gcc -gencode arch=compute_70,code=sm_70  ../common/utils_flat.cpp ../common/display_utils_flat.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo.cu
+	# nvcc -o thermo.sh -ccbin /usr/bin/gcc   -gencode arch=compute_70,code=sm_70  ../common/utils_flat_float.cpp ../common/display_utils_flat_float.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo_float.cu
 
 mif_test:
 	./thermo.sh ../common/config_cs512.ini
