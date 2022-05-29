@@ -5,13 +5,14 @@ mif_compile:
 	# nvcc -o thermo.sh -ccbin /usr/bin/gcc   -gencode arch=compute_70,code=sm_70  ../common/utils_flat_float.cpp ../common/display_utils_flat_float.cpp ../common/time_utils.cpp ../common/config_reader.cpp ../lib/inih/cpp/INIReader.cpp ../lib/inih/ini.c thermo_float.cu
 
 mif_test:
-	./thermo.sh ../common/config_cs512.ini
-	./thermo.sh ../common/config_cs256.ini
-	./thermo.sh ../common/config_cs128.ini
-	./thermo.sh ../common/config_cs64.ini
-	./thermo.sh ../common/config_cs32.ini
-	./thermo.sh ../common/config_cs16.ini
-	./thermo.sh ../common/config_cs8.ini
+	./thermo.sh ../common/config_cs1024.ini
+	# ./thermo.sh ../common/config_cs512.ini
+	# ./thermo.sh ../common/config_cs256.ini
+	# ./thermo.sh ../common/config_cs128.ini
+	# ./thermo.sh ../common/config_cs64.ini
+	# ./thermo.sh ../common/config_cs32.ini
+	# ./thermo.sh ../common/config_cs16.ini
+	# ./thermo.sh ../common/config_cs8.ini
 
 tests:
 	nvcc -o cuda_test.sh -gencode arch=compute_61,code=sm_61 test.cu 
