@@ -109,17 +109,17 @@ int main(int argc, char **argv)
         i++;
         thermodynamics_cuda<<<(MATRIX_DIMENTION * MATRIX_DIMENTION + SPLIT - 1) / SPLIT, SPLIT>>>(cuda_matrix, cuda_result_matrix, cuda_diff_matrix, MATRIX_DIMENTION, USE_DIFF);
         swap(cuda_matrix, cuda_result_matrix);
-        // if (DRAW_FREQUENCY > 0 && i % DRAW_FREQUENCY == 0)
-        // {
-        //     GE(cudaMemcpy(matrix, cuda_result_matrix, size, cudaMemcpyDeviceToHost));
-        //     save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
-        // }
-        // if ((USE_DIFF) && (i % 10000 == 0))
-        // {
-        //     GE(cudaMemcpy(diff_matrix, cuda_diff_matrix, size, cudaMemcpyDeviceToHost));
-        //     delta = largestElement(diff_matrix, MATRIX_DIMENTION);
-        //     printf("iteration %d delta: %.7f\n", i, delta);
-        // }
+        if (DRAW_FREQUENCY > 0 && i % DRAW_FREQUENCY == 0)
+        {
+            GE(cudaMemcpy(matrix, cuda_result_matrix, size, cudaMemcpyDeviceToHost));
+            save_to_file(matrix, MATRIX_DIMENTION, MAX_MATRIX_VALUE, i, USE_ABS_SCALE);
+        }
+        if ((USE_DIFF) && (i % 1000 == 0))
+        {
+            GE(cudaMemcpy(diff_matrix, cuda_diff_matrix, size, cudaMemcpyDeviceToHost));
+            delta = largestElement(diff_matrix, MATRIX_DIMENTION);
+            printf("iteration %d delta: %.7f\n", i, delta);
+        }
     }
     GE(cudaMemcpy(matrix, cuda_result_matrix, size, cudaMemcpyDeviceToHost));
     GE(cudaDeviceSynchronize());
