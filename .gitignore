@@ -1,6 +1,6 @@
 *.o
 
-
+.DS_Store
 *.pgm
 *.gif
 .vscode/
