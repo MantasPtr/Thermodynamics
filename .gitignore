@@ -1,12 +1,13 @@
 *.o
-*.sh
-*.png
+
+
 *.pgm
 *.gif
 .vscode/
 *.out
-src/mif/*.txt
-!src/mif/*.sh
+
+
+
 
 
 *.aux
