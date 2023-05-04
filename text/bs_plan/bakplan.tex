@@ -20,11 +20,12 @@
 \department{Programų sistemų bakalauro studijų programa}
 \papertype{Bakalauro baigiamojo darbo planas}
 
-\title{Šilumos laidumo uždavinio lygiagretinimo tyrimas naudojant centrinius ir grafinius procesorius}
-\titleineng{Steady-state heat equasion parallization analysis on CPU and GPU}
+\title{Neuroninio tinklu pritaikymas automatizuotam programinės įrangos sistemų problemų sprendimui}
+
+\titleineng{Automated software system issue solving using deep neural networks}
 \author{Mantas Petrikas}
 % \secondauthor{Vardonis Pavardonis}   % Pridėti antrą autorių
-\supervisor{dr. Rokas Astrauskas}
+\supervisor{dr. Vytautas Valaitis}
 % \reviewer{doc. dr. Vardauskas Pavardauskas}
 \date{Vilnius – \the\year}
 
@@ -35,70 +36,74 @@
 \begin{document}
 \maketitle
 
-%% Padėkų skyrius
-% \sectionnonumnocontent{}
-% \vspace{7cm}
-% \begin{center}
-%     Padėkos asmenims ir/ar organizacijoms
-% \end{center}
-
-% \sectionnonumnocontent{Santrauka}
-% Glaustai aprašomas darbo turinys: pristatoma nagrinėta problema ir padarytos
-% išvados. Santraukos apimtis ne didesnė nei 0,5 puslapio. Santraukų gale
-% nurodomi darbo raktiniai žodžiai. 
-% % Nurodomi iki 5 svarbiausių temos raktinių žodžių (terminų).
-% Vienas terminas gali susidėti iš kelių žodžių.
-% \raktiniaizodziai{raktinis žodis 1, raktinis žodis 2, raktinis žodis 3, raktinis žodis 4, raktinis žodis 5}   
-
-% \sectionnonumnocontent{Summary}
-% Santrauka anglų kalba. Santraukos apimtis ne didesnė nei 0,5 puslapio.
-% \keywords{keyword 1, keyword 2, keyword 3, keyword 4, keyword 5}
-
-% \tableofcontents
-
 
 \sectionnonum{Darbo planas}
 
-Bakalauriniame darbe bus tiriamos šilumos lygties paralelizavimo galimybes naudojant centrinius(ang. CPU) ir grafinių procesorius (ang. GPU). Šilumos uždavinys yra vienas iš Laplaso lygties pritaikymo galimybių. 
-Šios antros eilės dalinės diferencialinės lygtys plačiai naudojamos fizikoje, sprendžiant elektrostatikos \cite{house2008analytic}, gravitacijos, magnetizmo \cite{blakely1996potential}, pastovios būsenos temperatūrų \cite {berntsson2001numerical} ir hidrodinamikos \cite{kadanoff1985simulating} problemas. 
+Bakalauriniame darbe tiriamos modernių natūralios kalbos apdorojimo modelių pritaikymo galimybės programinės įrangos sistemų problemų sprendimui. 
+Dauguma modernių giliaisiais neoriniais tinklais paremtų natūralios kalbos apdorijų sistemų tokiu kaip Salesforce sukurtas CodeT5 \cite{wang2021codet5}, Microsoft CodeBERT \cite{feng2020codebert} ar OpenAI GPT-3 \cite{brown2020language} sugeba labai gerai generuoti kodo dalis,
+tačiau tokių modelių pritaikymo galimybės spręsti sistemos lygio problemas nėra iki galo ištirtos.
+
 \subsectionnonum{Darbo tikslas ir uždaviniai}
 
-Darbo tikslas - įvertinti ir palyginti šilumos laidumo uždavinio lygiagretinimo algoritmo efektyvumą naudojant centrinius ir grafinius procesorius.
+Darbo tikslas - sukurti giliaisiais neuroniniais tinklais paremtą sistemą kuris pagal programinės sistemos problemos aprašymą sugebėtų identifikuoti kodo dalis kurias reikėtų pakeisti norint išspręsti problemą ir pateikti galimus kodo pakeitimus.
 
 Uždaviniai:
-\begin{itemize}
-    \item implementuoti ir įvertinti šilumos laidumo uždavinio algoritmo pagreitėjimą naudojant centrinius procesorius
-    \item suprojektuoti ir implementuoti šilumos laidumo uždavinio sprendimo algorimtą, naudojantį grafinių procesorių resursus
-    \item įvertinti grafinius procesorius naudojančio algoritmo našumą ir praktiškumą lyginant su centrinius procesorius naudojančiu algoritmu
-    \item palyginti gautus rezultatus rezultatus su kitais panašiais problemas nagrinėjančių mokslinių darbų rezultatais
-\end{itemize}
+\begin{enumerate}
+    \item išanalizuoti ir įvertinti dabartinių kodo generavimo įrankių galimybės spęsti sistemos lygio problemas
+    \item surinkti sistemos funkcionalumo pakeitimų aprašymų ir realizuotų kodo pakeitimų skirta modelio mokymui
+    \item suprojektuoti sistemą, kuri priima sistemos kodą ir funkcionalumo aprašymą ir gražiną sąrašą failų kuriuos reikėtų pakeisti norint įgyvendinti funkcionalumą
+    \item apmokyti suprojektuotos sistemos giliuosius neuroninius modelius naudojant surinktą duomenų rinkinį ir įvertinti modelių veikimą
+    \item praplėsti sukurtos sistemos funkcionalumą pridedant kodo generavimo galimybę 
+    \item įvertinti sukurtą sistemą palyginant su kitomis koda generuojančiomis sistemos
+\end{enumerate}
 
 \subsectionnonum{Laukiami rezultatai}
-\begin{itemize}
-    \item Šilumos laidumo uždavinio algoritmo implementacija naudojanti centrinius procesorius
-    \item Šilumos laidumo uždavinio sprendimo implementacija naudojanti grafinius procesorius
-    \item Algoritmų teorinių ir praktinių pagreitėjimų analyzė
-    \item Grafinius ir centrinius procesorius naudojančių algoritmų pagreitėjimo palyginimas
-\end{itemize}
+\begin{enumerate}
+    \item sistemos funkcionalumo pakeitimų aprašymų ir realizuotų kodo pakeitimų duomenų rinkinys
+    \item kuriamos sistemos architektūros aprašymas
+    \item realizuota sistema sugebanti identifikuoti failus, kurios reikia pakeisti norint įgyvendinti sistemos funkcionalumo pakeitimą
+    \item realizuota sistema generuojanti kodo pakeitimus reikalingus sistemos funkcionalumo pakeisti
+    \item sukurtos sistemos giliųjų neuroninių tinklų modelių įvertinimo ataskaita 
+
+\end{enumerate}
+
 \subsectionnonum{Darbo metodai}
 \begin{itemize}
-    \item Algoritmų veikimo laiko matavimas, keičiant jo parametrus MIF klasteriuose
-    \item Algoritmų praktinių ir teorinių pagreitėjimų palyginomiji analyzė
-    \item Susijusios literatūros analyzė
+    \item Susijusios literatūros, duomenų rinkinių ir giliųjų neorinių tinklų modelių analizė
+    \item Skirtingu kodo generavimo modelių palyginamoji analizė
+    \item Atvirai pasiekiamų funkcionalumo pakeitimų aprašymų ir realizuotų kodo pakeitimų šaltinių analizė
+    \item Neuroninių tinklų pritaikymas problemai spęsti naudojant perkeliamąjį  mokymasi
+
 \end{itemize}
 
 \subsectionnonum{Darbo eiga}
 
-Darbo teorinėje dalyje bus atžvelgiamas šilumos laidumo uždavinys, jo pritaikymo ir praplėtimo galimybes.
-Darbe bus nagrinėjami CPU ir GPU architektūriniai skirtumai, siekiant apžvelgti ir įvertinti technologijų pritaikomomumą, privalumus ir trūkumus spendžiant šilumos pasiskirstymo pastovios būsenos sistemose (ang. steady-state heat distribution) uždavinį.
-Darbo metu bus nagrinėjamas ir įgyvendinamas šilumos lygties sprendimas apribotoje dvimatinėjė erdvėje, kurioje kraštų temperatūros yra žinomos ir nekintančios.
-Darbe bus apžvelgiami vertimo kriterijai, kurias galima įvertinti ir palyginti algoritmo našumą, praktines taikymo galimybes ir kaštus. Bus įvedami kriterijai reikalingi palyginti algoritmo našumą naudojant centrinius ir grafinius procesorius.
-Taip pat bus apžvelgiamas vienodos atminties prieigos (ang. UMA - uniform memory access) \cite{rogers2013amd} \cite{bader2001using} ir nevienodos atminties prieiga (ang. NUMA - non uniform memory access) \cite{lameter2013overview} programų architektūra, įvertinant jų trūkumus ir privalumus. 
+Darbe bus įvertinami esami atviro ir uždaro kodo produktų galimybės generuoti sistemos pakeitimus spręsti, pateikiant naujo funkcionalumo aprašymą.
+Darbe bus palyginamos skirtingos giliųjų neuroninių tinklų architektūros naudojamos šiai užduočiai spęsti.
+Apžvelgiami skirtingi duomenų rinkiniai naudoti apmokyti giliųjų neuroniniams tinklams ir jų aktualumas tiriamai problemai.
+Darbe bus įvertinos skirtingi duomenų apdorojimo ir tokenizavimo technikos norint paruošti duomenys modelio mokymui.
+Taip pat apžvelgiami modelio mokymui ir validavimui naudojami kriterijai.
 
-Darbo praktinėjė dalyje bus įgyvendimas nuoseklus algoritmas naudojant 1 centrinį procesorių, įvertinamas algoritmo našumas. 
-Taip pat bus įgyvendimas paralelizuotas šilumos lygties spendimo algoritmas, naudojant NUMA architektūra, įvertimas algortimo teorinis ir praktinis pagreitėjimas testuojant algoritmą MIF klasteryje keičiant programos parametrus ir procesorių skaičių.
-Apžvelgiami lygiagretino technologijos ir algortimo pakeitimai reikalingi paleisti algoritmą naudojant grafinius procesorius. Įgyvendimas lygiagretus algoritmas naudojant 1 grafinį procesorių. Įvertimas algoritmo pagreitėjimas, keičiant algoritmo parametrus. 
-Palyginimas algoritmo veikimas naudojant centrinis ir grafinius procesorius. Apžvelgiamos lygiagretinimo algoritmo galimybės naudojant kelis grafinius procesorius, su galimybę įgyvendinti ir ištirti algoritmo našumą naudojant kelis grafinius procesorius MIF klasteryje.
+
+% šilumos laidumo uždavinys, jo pritaikymo ir praplėtimo galimybes.
+% Darbe bus nagrinėjami CPU ir GPU architektūriniai skirtumai, siekiant apžvelgti ir įvertinti technologijų pritaikomomumą, privalumus ir trūkumus spendžiant šilumos pasiskirstymo pastovios būsenos sistemose (ang. steady-state heat distribution) uždavinį.
+% Darbo metu bus nagrinėjamas ir įgyvendinamas šilumos lygties sprendimas apribotoje dvimatinėjė erdvėje, kurioje kraštų temperatūros yra žinomos ir nekintančios.
+% Darbe bus apžvelgiami vertimo kriterijai, kurias galima įvertinti ir palyginti algoritmo našumą, praktines taikymo galimybes ir kaštus. Bus įvedami kriterijai reikalingi palyginti algoritmo našumą naudojant centrinius ir grafinius procesorius.
+% Taip pat bus apžvelgiamas vienodos atminties prieigos (ang. UMA - uniform memory access) \cite{rogers2013amd} \cite{bader2001using} ir nevienodos atminties prieiga (ang. NUMA - non uniform memory access) \cite{lameter2013overview} programų architektūra, įvertinant jų trūkumus ir privalumus. 
+
+
+
+Darbo praktinėje dalyje naudojantis laisvais prieinamais šaltiniais ir duomenų rinkiniais bus atrinktas duomenų rinkinys tinkamas šio darbo nagrinėjamos problemos sprendimui naudojamo giliojo neutroninio tinklo mokymui.
+Duomenų rinkinį turėtų sudaryti sistemos kodas, sistemoje esančios problemos ar naujo funkcionalumo aprašas, ir kodo pakeitimai sistemos funkcionalumo pakeitimui įgyvendinti.
+Norint pagreitinti sistemos sukūrimo ir apmokymo laiką bus bandoma kuo labiau pritaikyti jau laisvai prieinamus apmokytus modelius, tokius kaip CodeBERT \cite{feng2020codebert} ar GPT-2 \cite{radford2019language}.
+Turint duomenų rinkinį bus atrinka užduočiai tinkama teksto tokenizavimui skirta sistema.
+Tada bus sukurta sistemos architetūra ir apmokytas gilusis neoroninis tinklas sugebentis identifikuoti kurios sistemos failus reikia pakeisti norint pakeisti sistemos funkcionalumą.
+Realizavus šią sistemą, atsižvelgiant į darbui pateikti likusį laiką, bus bandomą ją praplėsti galimybe generuoti kodo pakeitimus reikalingus problemos sprendimui.
+
+% Darbo praktinėjė dalyje bus įgyvendimas nuoseklus algoritmas naudojant 1 centrinį procesorių, įvertinamas algoritmo našumas. 
+% Taip pat bus įgyvendimas paralelizuotas šilumos lygties spendimo algoritmas, naudojant NUMA architektūra, įvertimas algortimo teorinis ir praktinis pagreitėjimas testuojant algoritmą MIF klasteryje keičiant programos parametrus ir procesorių skaičių.
+% Apžvelgiami lygiagretino technologijos ir algortimo pakeitimai reikalingi paleisti algoritmą naudojant grafinius procesorius. Įgyvendimas lygiagretus algoritmas naudojant 1 grafinį procesorių. Įvertimas algoritmo pagreitėjimas, keičiant algoritmo parametrus. 
+% Palyginimas algoritmo veikimas naudojant centrinis ir grafinius procesorius. Apžvelgiamos lygiagretinimo algoritmo galimybės naudojant kelis grafinius procesorius, su galimybę įgyvendinti ir ištirti algoritmo našumą naudojant kelis grafinius procesorius MIF klasteryje.
 
 
 

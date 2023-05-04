@@ -5,6 +5,11 @@ default: generuoti removeGenerated
 
 generuoti:
 	xelatex $(fileName).tex
+	/Library/TeX/texbin/biber $(fileName)
+	xelatex $(fileName).tex
+
+genu:
+	xelatex $(fileName).tex
 	biber $(fileName)
 	xelatex $(fileName).tex
 	xdg-open $(fileName).pdf
@@ -23,9 +28,23 @@ ubuntu:
 	echo "Diegiamas Palemonas šriftas į sistemą"
 	sudo cp -r Palemonas-2.1 /usr/share/fonts/truetype/
 
+mac:
+	echo "Diegiamas LaTeX (PdfLaTeX, XeTeX ir kt.)"
+	# brew install mactex-no-gui
+	brew install basicTeX
+	
+	echo "Diegiama literatūros sąrašo tvarkyklė Biber skirta BibLaTeX paketui"
+	brew install biber
+
+	# echo "Diegiami OpenType šriftai"
+	# brew install font-texgyre
+
+	echo "Diegiamas Palemonas šriftas į sistemą"
+	sudo cp -r Palemonas-2.1 /Library/Fonts/
+
 
 text:
-	pdftotext -l 3 $(fileName).pdf tekstas.txt
+	pdftotext -l 3 bakalaurinis.pdf tekstas.txt
 
 clean:
 	git clean -dfx
